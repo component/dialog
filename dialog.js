@@ -243,7 +243,7 @@ Dialog.prototype.hide = function(ms){
   }
 
   // modal
-  if (this._overlay && !self.closedOverlay) this._overlay.hide();
+  if (this._overlay && !this.closedOverlay) this._overlay.hide();
 
   return this;
 };
