@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "dependencies": {
     "emitter-component": "*",
-    "jquery-component": "*"
+    "jquery-component": "*",
+    "overlay-component": "*"
   },
   "component": {
     "styles": ["dialog.css"],

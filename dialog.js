@@ -4,6 +4,7 @@
  */
 
 var Emitter = require('emitter')
+  , overlay = require('overlay')
   , $ = require('jquery');
 
 /**
@@ -145,7 +146,7 @@ Dialog.prototype.effect = function(type){
  */
 
 Dialog.prototype.modal = function(){
-  this._overlay = ui.overlay();
+  this.overlay(false);
   return this;
 };
 
@@ -156,14 +157,17 @@ Dialog.prototype.modal = function(){
  * @api public
  */
 
-Dialog.prototype.overlay = function(){
-  var self = this;
-  this._overlay = ui
-    .overlay({ closable: true })
+Dialog.prototype.overlay = function(closable){
+  var self = this
+    , closable = false !== closable;
+
+  this._overlay = overlay({ closable: closable })
     .on('hide', function(){
       self.closedOverlay = true;
+      self.el.removeClass('modal');
       self.hide();
     });
+
   return this;
 };
 

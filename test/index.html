@@ -40,6 +40,23 @@
             .hide(1000)
             .on('hide', function(){
               console.log('closed fourth');
+
+              dialog('Click the overlay to close')
+              .effect('slide')
+              .overlay()
+              .show()
+              .on('hide', function(){
+                console.log('closed fifth');
+
+                dialog('Modal')
+                .effect('fade')
+                .closable()
+                .modal()
+                .show()
+                .on('hide', function(){
+                  console.log('closed sixth');
+                });
+              });
             });
           });
         });
