@@ -235,9 +235,9 @@ Dialog.prototype.hide = function(ms){
   // hide / remove
   this.el.addClass('hide');
   if (this._effect) {
-    setTimeout(function(self){
+    setTimeout(function(){
       self.remove();
-    }, 500, this);
+    }, 500);
   } else {
     self.remove();
   }
