@@ -7,7 +7,9 @@
   }
   "component": {
     "scripts": {
-      "dialog": "index.js"
-    }
+      "dialog": "dialog.js"
+    },
+    "styles": ["dialog.css"],
+    "templates": ["dialog.html"]
   }
 }
