@@ -4,7 +4,7 @@
  */
 
 var Emitter = require('emitter')
-  , $ = require('zepto');
+  , $ = require('jquery');
 
 /**
  * Active dialog.

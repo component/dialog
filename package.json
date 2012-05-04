@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "dependencies": {
     "emitter-component": "*",
-    "zepto": "*"
+    "jquery-component": "*"
   },
   "component": {
     "styles": ["dialog.css"],
