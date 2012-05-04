@@ -3,7 +3,8 @@
   "description": "Dialog component",
   "version": "0.0.1",
   "dependencies": {
-    "emitter-component": "*"
+    "emitter-component": "*",
+    "zepto": "*"
   },
   "component": {
     "styles": ["dialog.css"],

@@ -3,7 +3,8 @@
  * Module dependencies.
  */
 
-var Emitter = require('emitter');
+var Emitter = require('emitter')
+  , $ = require('zepto');
 
 /**
  * Active dialog.
