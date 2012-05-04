@@ -9,31 +9,41 @@
     <title>Dialog</title>
     <script src="out.js"></script>
     <script>
-      var dialog = require('dialog');
+      var dialog = require('dialog')
+        , $ = require('jquery');
 
       dialog('Message only')
-        .effect('slide')
+      .effect('slide')
+      .show()
+      .hide(1500)
+      .on('hide', function(){
+        console.log('closed first');
+
+        dialog('Title', 'With message')
+        .effect('fade')
         .show()
         .hide(1500)
         .on('hide', function(){
-          console.log('closed first');
+          console.log('closed second');
 
           dialog('Title', 'With message')
-            .effect('fade')
-            .show()
-            .hide(1500)
-            .on('hide', function(){
-              console.log('closed second');
+          .effect('scale')
+          .show()
+          .closable()
+          .on('hide', function(){
+            console.log('closed third');
 
-              dialog('Title', 'With message')
-                .effect('scale')
-                .show()
-                .closable()
-                .on('hide', function(){
-                  console.log('closed third');
-                });
+            dialog('Title', $('<h3>HTML</h3>'))
+            .effect('scale')
+            // .overlay()
+            .show()
+            .hide(1000)
+            .on('hide', function(){
+              console.log('closed fourth');
             });
+          });
         });
+      });
 
     </script>
   </body>
