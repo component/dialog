@@ -12,6 +12,12 @@ var Emitter = require('emitter');
 var active;
 
 /**
+ * Expose `dialog()`.
+ */
+
+module.exports = dialog;
+
+/**
  * Expose `Dialog`.
  */
 
@@ -27,7 +33,7 @@ exports.Dialog = Dialog;
  * @api public
  */
 
-exports.dialog = function(title, msg){
+function dialog(title, msg){
   switch (arguments.length) {
     case 2:
       return new Dialog({ title: title, message: msg });
@@ -56,7 +62,7 @@ exports.dialog = function(title, msg){
 function Dialog(options) {
   Emitter.call(this);
   options = options || {};
-  this.template = html;
+  this.template = render('dialog');
   this.el = $(this.template);
   this.render(options);
   if (active) active.hide();

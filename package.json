@@ -6,10 +6,12 @@
     "emitter-component": "*"
   },
   "component": {
+    "styles": ["dialog.css"],
     "scripts": {
       "dialog": "dialog.js"
     },
-    "styles": ["dialog.css"],
-    "templates": ["dialog.html"]
+    "templates": {
+      "dialog": "dialog.html"
+    }
   }
 }
