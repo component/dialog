@@ -1,31 +1,62 @@
 
-# Emitter
+# Dialog
 
-  Event emitter component.
+  Dialog component.
 
 ## Installation
 
 ```
-$ npm install emitter-component
+$ npm install dialog-component
 ```
+
+## Events
+
+  - `show` the dialog is shown
+  - `hide` the dialog is hidden
 
 ## API
   
-### Emitter#on(event, fn)
+### dialog(msg)
 
-  Register an `event` handler `fn`.
+  Display a dialog with a `msg` only.
 
-### Emitter#once(event, fn)
+### dialog(title, msg)
 
-  Register a single-shot `event` handler `fn`,
-  removed immediately after it is invoked the
-  first time.
+  Display a dialog with `title` and `msg`.
 
-### Emitter#off(event, fn)
+### Dialog#closable()
 
-  Remove `event` handler `fn`, or pass only the `event`
-  name to remove all handlers for `event`.
+  Make the dialog closable, this adds a ×
+  that users make click to forcefully close
+  the dialog.
 
-### Emitter#emit(event, ...)
+### Dialog#effect(name)
 
-  Emit an `event` with variable option args.
+  Assign the effect name, driven by CSS transitions.
+  Out of the box the following are available:
+
+  - `slide`
+  - `fade`
+  - `scale`
+
+### Dialog#overlay()
+
+  Add a clickable overlay, which closes the dialog.
+
+### Dialog#modal()
+
+  Add a non-clickable overlay making it modal.
+
+### Dialog#escapable()
+
+  This is __private__ as it is implied by other options.
+  If no overlay is used, or the overlay is non-modal
+  then a user may close the dialog by pressing the escape key.
+
+### Dialog#show()
+
+  Show the dialog.
+
+### Dialog#hide([ms])
+
+  Hide the dialog immediately or wait `ms`.
