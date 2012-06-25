@@ -97,8 +97,8 @@ Dialog.prototype.render = function(options){
     return false;
   });
 
-  el.find('h1').text(title);
-  if (!title) el.find('h1').remove();
+  el.find('.title').text(title);
+  if (!title) el.find('.title').remove();
 
   // message
   if ('string' == typeof msg) {
