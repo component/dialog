@@ -17,7 +17,7 @@ var active;
  * Expose `dialog()`.
  */
 
-module.exports = dialog;
+exports = module.exports = dialog;
 
 /**
  * Expose `Dialog`.
@@ -68,7 +68,7 @@ function Dialog(options) {
   this.el = $(this.template);
   this.render(options);
   if (active && !active.hiding) active.hide();
-  if (Dialog.effect) this.effect(Dialog.effect);
+  if (exports.effect) this.effect(exports.effect);
   active = this;
 };
 
