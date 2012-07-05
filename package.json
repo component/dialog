@@ -1,7 +1,7 @@
 {
   "name": "dialog-component",
   "description": "Dialog component",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "keywords": ["dialog", "component"],
   "dependencies": {
     "emitter-component": "*",
