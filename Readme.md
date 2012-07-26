@@ -62,3 +62,7 @@ $ npm install dialog-component
 ### Dialog#hide([ms])
 
   Hide the dialog immediately or wait `ms`.
+
+## License
+
+  MIT
