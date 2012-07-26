@@ -11,6 +11,15 @@
 $ npm install dialog-component
 ```
 
+## Features
+
+  - events for composition
+  - structural CSS letting you decide on style
+  - overlay support
+  - modal overlay support
+  - escapable (esc key support)
+  - fluent API
+
 ## Events
 
   - `show` the dialog is shown
