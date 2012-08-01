@@ -11,7 +11,7 @@
   "component": {
     "styles": ["dialog.css"],
     "scripts": {
-      "dialog": "dialog.js"
+      "dialog": "index.js"
     },
     "templates": {
       "dialog": "dialog.html"
