@@ -55,6 +55,14 @@
                 .show()
                 .on('hide', function(){
                   console.log('closed sixth');
+
+                  dialog('Escape')
+                  .effect('fade')
+                  .overlay()
+                  .show()
+                  .on('hide', function(){
+                    console.log('closed seventh');
+                  });
                 });
               });
             });

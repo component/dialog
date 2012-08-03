@@ -146,7 +146,7 @@ Dialog.prototype.effect = function(type){
  */
 
 Dialog.prototype.modal = function(){
-  this.overlay(false);
+  this._overlay = overlay();
   return this;
 };
 
@@ -157,16 +157,20 @@ Dialog.prototype.modal = function(){
  * @api public
  */
 
-Dialog.prototype.overlay = function(closable){
-  var self = this
-    , closable = false !== closable;
+Dialog.prototype.overlay = function(){
+  var self = this;
+  var o = overlay({ closable: true });
 
-  this._overlay = overlay({ closable: closable })
-    .on('hide', function(){
-      self.closedOverlay = true;
-      self.el.removeClass('modal');
-      self.hide();
-    });
+  o.on('hide', function(){
+    self.closedOverlay = true;
+    self.hide();
+  });
+
+  o.on('close', function(){
+    self.emit('close');
+  });
+
+  this._overlay = o;
 
   return this;
 };
@@ -181,7 +185,7 @@ Dialog.prototype.escapable = function(){
   var self = this;
   $(document).bind('keydown.dialog', function(e){
     if (27 != e.which) return;
-    $(this).unbind('keydown.dialog');
+    self.emit('escape');
     self.hide();
   });
 };
@@ -265,5 +269,6 @@ Dialog.prototype.hide = function(ms){
 Dialog.prototype.remove = function(){
   this.emit('hide');
   this.el.remove();
+  $(document).unbind('keydown.dialog');
   return this;
 };

@@ -24,6 +24,8 @@ $ npm install dialog-component
 
   - `show` the dialog is shown
   - `hide` the dialog is hidden
+  - `escape` the dialog was closed via the escape key
+  - `close` the dialog was closed via the close button
 
 ## API
   
