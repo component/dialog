@@ -1,12 +1,12 @@
 {
   "name": "dialog",
   "description": "Dialog component",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": ["dialog", "ui"],
   "dependencies": {
     "component/emitter": "*",
     "component/jquery": "*",
-    "component/overlay": "*"
+    "component/overlay": "0.0.2"
   },
   "scripts": ["index.js"],
   "styles": ["dialog.css"],
