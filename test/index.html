@@ -18,21 +18,21 @@
       .hide(1500)
       .on('hide', function(){
         console.log('closed first');
-
+      
         dialog('Title', 'With message')
         .effect('fade')
         .show()
         .hide(1500)
         .on('hide', function(){
           console.log('closed second');
-
+      
           dialog('Title', 'With message')
           .effect('scale')
           .show()
           .closable()
           .on('hide', function(){
             console.log('closed third');
-
+      
             dialog('Title', $('<h3>HTML</h3>'))
             .effect('scale')
             // .overlay()
@@ -40,14 +40,14 @@
             .hide(1000)
             .on('hide', function(){
               console.log('closed fourth');
-
+      
               dialog('Click the overlay to close')
               .effect('slide')
               .overlay()
               .show()
               .on('hide', function(){
                 console.log('closed fifth');
-
+      
                 dialog('Modal')
                 .effect('fade')
                 .closable()
@@ -55,7 +55,7 @@
                 .show()
                 .on('hide', function(){
                   console.log('closed sixth');
-
+      
                   dialog('Escape')
                   .effect('fade')
                   .overlay()

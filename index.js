@@ -69,6 +69,7 @@ function Dialog(options) {
   this.render(options);
   if (active && !active.hiding) active.hide();
   if (exports.effect) this.effect(exports.effect);
+  this.on('escape', this.hide.bind(this));
   active = this;
 };
 
@@ -160,18 +161,11 @@ Dialog.prototype.modal = function(){
 Dialog.prototype.overlay = function(){
   var self = this;
   var o = overlay({ closable: true });
-
   o.on('hide', function(){
-    self.closedOverlay = true;
+    self._overlay = null;
     self.hide();
   });
-
-  o.on('close', function(){
-    self.emit('close');
-  });
-
   this._overlay = o;
-
   return this;
 };
 
@@ -186,7 +180,6 @@ Dialog.prototype.escapable = function(){
   $(document).bind('keydown.dialog', function(e){
     if (27 != e.which) return;
     self.emit('escape');
-    self.hide();
   });
 };
 
@@ -219,6 +212,18 @@ Dialog.prototype.show = function(){
 };
 
 /**
+ * Hide the overlay.
+ *
+ * @api private
+ */
+
+Dialog.prototype.hideOverlay = function(){
+  if (!this._overlay) return;
+  this._overlay.remove();
+  this._overlay = null;
+};
+
+/**
  * Hide the dialog with optional delay of `ms`,
  * otherwise the dialog is removed immediately.
  *
@@ -231,6 +236,7 @@ Dialog.prototype.show = function(){
 
 Dialog.prototype.hide = function(ms){
   var self = this;
+  $(document).unbind('keydown.dialog');
 
   // prevent thrashing
   this.hiding = true;
@@ -253,12 +259,11 @@ Dialog.prototype.hide = function(ms){
     self.remove();
   }
 
-  // modal
-  if (this._overlay && !this.closedOverlay) this._overlay.hide();
+  // overlay
+  this.hideOverlay();
 
   return this;
 };
-
 /**
  * Hide the dialog without potential animation.
  *
@@ -269,6 +274,5 @@ Dialog.prototype.hide = function(ms){
 Dialog.prototype.remove = function(){
   this.emit('hide');
   this.el.remove();
-  $(document).unbind('keydown.dialog');
   return this;
 };
