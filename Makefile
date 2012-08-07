@@ -1,8 +1,12 @@
 
-test/out.js: index.js dialog.css
-	component build package.json test/out
+build: template.js dialog.css index.js
+	component build
+
+template.js: dialog.html
+	component convert $<
 
 clean:
-	rm -f test/out.{js,css}
+	rm -fr build
+	rm -f template.js
 
 .PHONY: clean

@@ -5,7 +5,7 @@
 
 var Emitter = require('emitter')
   , overlay = require('overlay')
-  , $ = require('jquery');
+  , o = require('jquery');
 
 /**
  * Active dialog.
@@ -64,8 +64,8 @@ function dialog(title, msg){
 function Dialog(options) {
   Emitter.call(this);
   options = options || {};
-  this.template = render('dialog');
-  this.el = $(this.template);
+  this.template = require('template');
+  this.el = o(this.template);
   this.render(options);
   if (active && !active.hiding) active.hide();
   if (exports.effect) this.effect(exports.effect);
@@ -177,7 +177,7 @@ Dialog.prototype.overlay = function(){
 
 Dialog.prototype.escapable = function(){
   var self = this;
-  $(document).bind('keydown.dialog', function(e){
+  o(document).bind('keydown.dialog', function(e){
     if (27 != e.which) return;
     self.emit('escape');
   });
@@ -236,7 +236,7 @@ Dialog.prototype.hideOverlay = function(){
 
 Dialog.prototype.hide = function(ms){
   var self = this;
-  $(document).unbind('keydown.dialog');
+  o(document).unbind('keydown.dialog');
 
   // prevent thrashing
   this.hiding = true;

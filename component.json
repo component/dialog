@@ -8,7 +8,6 @@
     "component/jquery": "*",
     "component/overlay": "0.0.2"
   },
-  "scripts": ["index.js"],
-  "styles": ["dialog.css"],
-  "templates": ["dialog.html"]
+  "scripts": ["index.js", "template.js"],
+  "styles": ["dialog.css"]
 }
