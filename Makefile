@@ -2,7 +2,7 @@
 build: template.js dialog.css index.js
 	component build
 
-template.js: dialog.html
+template.js: template.html
 	component convert $<
 
 clean:
