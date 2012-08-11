@@ -9,7 +9,6 @@ components:
 	@component install
 
 clean:
-	rm -fr build
-	rm -f template.js
+	rm -fr build components template.js
 
 .PHONY: clean
