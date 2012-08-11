@@ -64,7 +64,7 @@ function dialog(title, msg){
 function Dialog(options) {
   Emitter.call(this);
   options = options || {};
-  this.template = require('template');
+  this.template = require('./template');
   this.el = o(this.template);
   this.render(options);
   if (active && !active.hiding) active.hide();
