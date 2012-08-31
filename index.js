@@ -126,6 +126,19 @@ Dialog.prototype.closable = function(){
 };
 
 /**
+ * Add class `name`.
+ *
+ * @param {String} name
+ * @return {Dialog}
+ * @api public
+ */
+
+Dialog.prototype.addClass = function(name){
+  this.el.addClass(name);
+  return this;
+};
+
+/**
  * Set the effect to `type`.
  *
  * @param {String} type
@@ -135,7 +148,7 @@ Dialog.prototype.closable = function(){
 
 Dialog.prototype.effect = function(type){
   this._effect = type;
-  this.el.addClass(type);
+  this.addClass(type);
   return this;
 };
 

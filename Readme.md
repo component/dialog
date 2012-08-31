@@ -74,6 +74,10 @@ $ npm install dialog-component
 
   Hide the dialog immediately or wait `ms`.
 
+### Dialog#addClass(name)
+
+  Add class `name`, useful for styling dialogs differently.
+
 ## License
 
   MIT
