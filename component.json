@@ -6,7 +6,7 @@
   "dependencies": {
     "component/emitter": "*",
     "component/jquery": "*",
-    "component/overlay": "0.0.2"
+    "component/overlay": "*"
   },
   "scripts": ["index.js", "template.js"],
   "styles": ["dialog.css"]
