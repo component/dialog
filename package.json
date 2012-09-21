@@ -1,0 +1,18 @@
+{
+  "name": "dialog-component",
+  "description": "Dialog component",
+  "version": "0.0.5",
+  "keywords": ["dialog", "ui"],
+  "dependencies": {
+    "emitter-component": "*",
+    "jquery-component": "*",
+    "overlay-component": "*"
+  },
+  "component": {
+    "scripts": {
+      "dialog/index.js": "index.js",
+      "dialog/template.js": "template.js"
+    },
+    "styles": ["dialog.css"]
+  }
+}
