@@ -1,1 +1,1 @@
-module.exports = '<div id="dialog" class="hide">\n  <div class="content">\n    <span class="title">Title</span>\n    <a href="#" class="close">×</a>\n    <div class="body">\n      <p>Message</p>\n    </div>\n  </div>\n</div>';
+module.exports = '<div id="dialog" class="hide">\n  <div class="content">\n    <span class="title">Title</span>\n    <a href="#" class="close">× <em>close</em></a>\n    <div class="body">\n      <p>Message</p>\n    </div>\n  </div>\n</div>';

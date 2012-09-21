@@ -38,6 +38,10 @@
   display: none;
 }
 
+#dialog .close em {
+  display: none;
+}
+
 #dialog.closable .close {
   display: block;
 }
