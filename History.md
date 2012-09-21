@@ -1,4 +1,10 @@
 
+0.0.5 / 2012-09-21 
+==================
+
+  * add hidden "close" em within .close
+  * remove default box-shadow on .modal. Closes #3
+
 0.0.4 / 2012-08-31 
 ==================
 
