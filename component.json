@@ -2,7 +2,7 @@
   "name": "dialog",
   "description": "Dialog component",
   "version": "0.0.5",
-  "keywords": ["dialog", "ui"],
+  "keywords": ["dialog", "ui", "modal"],
   "dependencies": {
     "component/emitter": "*",
     "component/jquery": "*",
