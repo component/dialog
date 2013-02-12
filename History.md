@@ -1,4 +1,10 @@
 
+0.0.6 / 2013-02-12 
+==================
+
+  * remove redundant 'show' event
+  * fix gap between x and "close"
+
 0.0.5 / 2012-09-21 
 ==================
 
