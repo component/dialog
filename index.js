@@ -220,7 +220,6 @@ Dialog.prototype.show = function(){
 
   this.el.appendTo('body');
   this.el.css({ marginLeft: -(this.el.width() / 2) + 'px' });
-  this.emit('show');
   return this;
 };
 
