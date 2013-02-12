@@ -208,8 +208,7 @@ Dialog.prototype.escapable = function(){
 Dialog.prototype.show = function(){
   var overlay = this._overlay;
 
-  this.emit('show');
-
+  // overlay
   if (overlay) {
     overlay.show();
     this.el.addClass('modal');
@@ -218,8 +217,11 @@ Dialog.prototype.show = function(){
   // escape
   if (!overlay || overlay.closable) this.escapable();
 
+  // position
   this.el.appendTo('body');
   this.el.css({ marginLeft: -(this.el.width() / 2) + 'px' });
+
+  this.emit('show');
   return this;
 };
 
