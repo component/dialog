@@ -26,7 +26,7 @@ exports = module.exports = dialog;
 exports.Dialog = Dialog;
 
 /**
- * Return a new `Dialog` with the given 
+ * Return a new `Dialog` with the given
  * (optional) `title` and `msg`.
  *
  * @param {String} title or msg
@@ -171,9 +171,10 @@ Dialog.prototype.modal = function(){
  * @api public
  */
 
-Dialog.prototype.overlay = function(){
+Dialog.prototype.overlay = function(opts){
   var self = this;
-  var o = overlay({ closable: true });
+  opts = opts || { closable: true };
+  var o = overlay(opts);
   o.on('hide', function(){
     self._overlay = null;
     self.hide();
@@ -185,7 +186,7 @@ Dialog.prototype.overlay = function(){
 /**
  * Close the dialog when the escape key is pressed.
  *
- * @api private
+ * @api public
  */
 
 Dialog.prototype.escapable = function(){
@@ -194,6 +195,7 @@ Dialog.prototype.escapable = function(){
     if (27 != e.which) return;
     self.emit('escape');
   });
+  return this;
 };
 
 /**
