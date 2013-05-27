@@ -4,9 +4,9 @@
   "version": "0.0.6",
   "keywords": ["dialog", "ui", "modal"],
   "dependencies": {
-    "component/emitter": "*",
+    "component/emitter": "1.0.0",
     "component/jquery": "*",
-    "component/overlay": "*"
+    "component/overlay": "0.1.0"
   },
   "scripts": ["index.js", "template.js"],
   "styles": ["dialog.css"]

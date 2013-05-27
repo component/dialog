@@ -4,9 +4,9 @@
   "version": "0.0.6",
   "keywords": ["dialog", "ui"],
   "dependencies": {
-    "emitter-component": "*",
+    "emitter-component": "1.0.0",
     "jquery-component": "*",
-    "overlay-component": "*"
+    "overlay-component": "0.1.0"
   },
   "component": {
     "scripts": {
