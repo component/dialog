@@ -5,7 +5,10 @@
 
 var Emitter = require('emitter')
   , overlay = require('overlay')
-  , o = require('jquery');
+  , domify = require('domify')
+  , events = require('event')
+  , classes = require('classes')
+  , query = require('query');
 
 /**
  * Active dialog.
@@ -26,7 +29,7 @@ exports = module.exports = dialog;
 exports.Dialog = Dialog;
 
 /**
- * Return a new `Dialog` with the given 
+ * Return a new `Dialog` with the given
  * (optional) `title` and `msg`.
  *
  * @param {String} title or msg
@@ -65,7 +68,8 @@ function Dialog(options) {
   Emitter.call(this);
   options = options || {};
   this.template = require('./template');
-  this.el = o(this.template);
+  this.el = domify(this.template)[0];
+  this._classes = classes(this.el);
   this.render(options);
   if (active && !active.hiding) active.hide();
   if (exports.effect) this.effect(exports.effect);
@@ -87,29 +91,37 @@ Dialog.prototype = new Emitter;
  */
 
 Dialog.prototype.render = function(options){
-  var el = this.el
+  var self = this
+    , el = self.el
     , title = options.title
-    , msg = options.message
-    , self = this;
+    , titleEl = query('.title', el)
+    , pEl = query('p', el)
+    , msg = options.message;
 
-  el.find('.close').click(function(){
+  events.bind(query('.close', el), 'click', function () {
     self.emit('close');
     self.hide();
     return false;
   });
 
-  el.find('.title').text(title);
-  if (!title) el.find('.title').remove();
+  if (titleEl) {
+    if (!title) {
+      titleEl.parentNode.removeChild(titleEl);
+    } else {
+      titleEl.textContent = title;
+    }
+  }
 
   // message
   if ('string' == typeof msg) {
-    el.find('p').text(msg);
+    pEl.textContent = msg;
   } else if (msg) {
-    el.find('p').replaceWith(msg.el || msg);
+    pEl.parentNode.insertBefore(msg.el || msg, pEl);
+    pEl.parentNode.removeChild(pEl);
   }
 
   setTimeout(function(){
-    el.removeClass('hide');
+    self._classes.remove('hide');
   }, 0);
 };
 
@@ -121,8 +133,7 @@ Dialog.prototype.render = function(options){
  */
 
 Dialog.prototype.closable = function(){
-  this.el.addClass('closable');
-  return this;
+  return this.addClass('closable');
 };
 
 /**
@@ -134,7 +145,7 @@ Dialog.prototype.closable = function(){
  */
 
 Dialog.prototype.addClass = function(name){
-  this.el.addClass(name);
+  this._classes.add(name);
   return this;
 };
 
@@ -190,10 +201,13 @@ Dialog.prototype.overlay = function(){
 
 Dialog.prototype.escapable = function(){
   var self = this;
-  o(document).bind('keydown.dialog', function(e){
-    if (27 != e.which) return;
+  // Save reference to remove listener later
+  self._escKeyCallback = self._escKeyCallback || function (e) {
+    e.which = e.which || e.keyCode;
+    if (27 !== e.which) return;
     self.emit('escape');
-  });
+  };
+  events.bind(document, 'keydown', self._escKeyCallback);
 };
 
 /**
@@ -211,15 +225,15 @@ Dialog.prototype.show = function(){
   // overlay
   if (overlay) {
     overlay.show();
-    this.el.addClass('modal');
+    this._classes.add('modal');
   }
 
   // escape
   if (!overlay || overlay.closable) this.escapable();
 
   // position
-  this.el.appendTo('body');
-  this.el.css({ marginLeft: -(this.el.width() / 2) + 'px' });
+  document.body.appendChild(this.el);
+  this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'
 
   this.emit('show');
   return this;
@@ -250,22 +264,25 @@ Dialog.prototype.hideOverlay = function(){
 
 Dialog.prototype.hide = function(ms){
   var self = this;
-  o(document).unbind('keydown.dialog');
 
-  // prevent thrashing
-  this.hiding = true;
+  if (self._escKeyCallback) {
+    events.unbind(document, 'keydown', self._escKeyCallback);
+  }
+
+  // prevent thrashing - this isn't used
+  self.hiding = true;
 
   // duration
   if (ms) {
     setTimeout(function(){
       self.hide();
     }, ms);
-    return this;
+    return self;
   }
 
   // hide / remove
-  this.el.addClass('hide');
-  if (this._effect) {
+  self._classes.add('hide');
+  if (self._effect) {
     setTimeout(function(){
       self.remove();
     }, 500);
@@ -274,9 +291,9 @@ Dialog.prototype.hide = function(ms){
   }
 
   // overlay
-  this.hideOverlay();
+  self.hideOverlay();
 
-  return this;
+  return self;
 };
 /**
  * Hide the dialog without potential animation.
@@ -287,6 +304,6 @@ Dialog.prototype.hide = function(ms){
 
 Dialog.prototype.remove = function(){
   this.emit('hide');
-  this.el.remove();
+  this.el.parentNode.removeChild(this.el);
   return this;
 };
