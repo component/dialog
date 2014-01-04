@@ -237,6 +237,7 @@ Dialog.prototype.show = function(){
   document.body.appendChild(this.el);
   this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'
 
+  this._classes.remove('hide');
   this.emit('show');
   return this;
 };
