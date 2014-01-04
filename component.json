@@ -5,8 +5,11 @@
   "keywords": ["dialog", "ui", "modal"],
   "dependencies": {
     "component/emitter": "1.0.0",
-    "component/jquery": "*",
-    "component/overlay": "0.1.1"
+    "component/overlay": "0.1.1",
+    "component/domify": "*",
+    "component/event": "*",
+    "component/classes": "*",
+    "component/query": "*"
   },
   "scripts": ["index.js", "template.js"],
   "styles": ["dialog.css"]
