@@ -68,7 +68,7 @@ function Dialog(options) {
   Emitter.call(this);
   options = options || {};
   this.template = require('./template');
-  this.el = domify(this.template)[0];
+  this.el = domify(this.template);
   this._classes = classes(this.el);
   this.render(options);
   if (active && !active.hiding) active.hide();
