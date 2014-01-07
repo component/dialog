@@ -67,7 +67,7 @@ function dialog(title, msg){
 function Dialog(options) {
   Emitter.call(this);
   options = options || {};
-  this.template = require('./template');
+  this.template = require('./template.html');
   this.el = domify(this.template);
   this._classes = classes(this.el);
   this.render(options);
