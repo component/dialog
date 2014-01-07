@@ -11,6 +11,17 @@
     "component/classes": "*",
     "component/query": "*"
   },
-  "scripts": ["index.js", "template.js"],
-  "styles": ["dialog.css"]
+  "development": {
+    "visionmedia/mocha": "*",
+    "dominicbarnes/expect.js": "*"
+  },
+  "scripts": [
+    "index.js"
+  ],
+  "styles": [
+    "dialog.css"
+  ],
+  "templates": [
+    "template.html"
+  ]
 }

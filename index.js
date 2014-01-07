@@ -306,7 +306,9 @@ Dialog.prototype.hide = function(ms){
  */
 
 Dialog.prototype.remove = function(){
-  this.emit('hide');
-  this.el.parentNode.removeChild(this.el);
+  if (this.el.parentNode) {
+    this.emit('hide');
+    this.el.parentNode.removeChild(this.el);
+  }
   return this;
 };

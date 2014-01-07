@@ -28,7 +28,7 @@ $ npm install dialog-component
   - `close` the dialog was closed via the close button
 
 ## API
-  
+
 ### dialog(msg)
 
   Display a dialog with a `msg` only.
@@ -81,3 +81,12 @@ $ npm install dialog-component
 ## License
 
   MIT
+
+## Developers
+
+Install [component-test](https://github.com/MatthewMueller/component-test)
+globally in order to run unit tests:
+
+```bash
+sudo npm install -g component-test2
+```

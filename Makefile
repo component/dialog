@@ -1,14 +1,22 @@
 
-build: template.js dialog.css index.js components
-	@component build
+all: build
 
-template.js: template.html
-	@component convert $<
+components: component.json
+	component install --dev
 
-components:
-	@component install
+build: index.js dialog.css template.html | components
+	component build --dev
 
 clean:
-	rm -fr build components template.js
+	rm -rf components build
 
-.PHONY: clean
+test: test-phantom
+
+test-phantom: | build
+	component test phantom
+
+test-browser: | build
+	component test browser
+
+
+.PHONY: all clean test test-phantom test-browser
