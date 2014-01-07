@@ -2,17 +2,16 @@
   "name": "dialog-component",
   "description": "Dialog component",
   "version": "0.0.7",
-  "keywords": ["dialog", "ui"],
+  "keywords": [
+    "dialog",
+    "ui"
+  ],
   "dependencies": {
-    "emitter-component": "1.0.0",
-    "jquery-component": "*",
-    "overlay-component": "0.1.0"
-  },
-  "component": {
-    "scripts": {
-      "dialog/index.js": "index.js",
-      "dialog/template.js": "template.js"
-    },
-    "styles": ["dialog.css"]
+    "query-component": "0.0.1",
+    "event-component": "~0.1.0",
+    "emitter-component": "~1.1.1",
+    "domify": "~1.1.1",
+    "overlay-component": "~0.1.0",
+    "classes-component": "~1.1.3"
   }
 }
