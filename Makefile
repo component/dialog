@@ -4,8 +4,9 @@ all: build
 components: component.json
 	component install --dev
 
-build: index.js dialog.css template.html | components
+build: index.js index.css index.html | components
 	component build --dev
+	myth build/build.css build/build.css
 
 clean:
 	rm -rf components build

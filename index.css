@@ -1,0 +1,52 @@
+.Dialog {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  max-width: 600px;
+  min-width: 250px;
+  background: white;
+  z-index: 1000;
+}
+
+/* close */
+
+.Dialog-close {
+  display: none;
+}
+
+.Dialog.closable .Dialog-close {
+  display: block;
+}
+
+/* slide */
+
+.Dialog.slide {
+  transition: opacity 300ms, transform 300ms;
+}
+
+.Dialog.slide.hide {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+/* fade */
+
+.Dialog.fade {
+  transition: opacity 300ms;
+}
+
+.Dialog.fade.hide {
+  opacity: 0;
+}
+
+/* scale */
+
+.Dialog.scale {
+  transition: transform 300ms;
+  transform: scale(1);
+}
+
+.Dialog.scale.hide {
+  transform: scale(0);
+}
