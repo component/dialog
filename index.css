@@ -1,0 +1,31 @@
+.Dialog {
+  max-width: 600px;
+  min-width: 500px;
+  background: white;
+  position: relative;
+}
+
+.Dialog-close {
+  display: none;
+  cursor: pointer;
+}
+
+.Dialog.closable .Dialog-close {
+  display: block;
+}
+
+.Dialog-content {
+
+}
+
+.Dialog-title {
+
+}
+
+.Dialog-button {
+
+}
+
+.Dialog-button.hidden {
+  display: none;
+}

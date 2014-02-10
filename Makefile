@@ -4,7 +4,7 @@ all: build
 components: component.json
 	component install --dev
 
-build: index.js dialog.css template.html | components
+build: index.js index.css index.html | components
 	component build --dev
 
 clean:

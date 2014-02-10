@@ -1,77 +1,40 @@
-<!DOCTYPE 5>
 <html>
-  <head>
-    <title>Dialog</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" href="../build/build.css" />
-  </head>
-  <body>
-    <title>Dialog</title>
-    <script src="../build/build.js"></script>
-    <script>
-      var dialog = require('dialog');
+<head>
+  <link rel="stylesheet" href="../build/build.css" />
+  <style>
+    .Modal {
+      box-shadow: 2px 2px 5px rgba(0,0,0,.4);
+      background-color: white;
+      border-radius: 4px;
+      width: 500px;
+    }
+    .Overlay {
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+    }
+  </style>
+</head>
+<body>
+  <script src="../build/build.js"></script>
+  <script>
+    (function () {
+      var Dialog = require('dialog');
+      var enter = require('on-enter');
 
-      dialog('Message only')
-      .effect('slide')
-      .show()
-      .hide(1500)
-      .on('hide', function(){
-        console.log('closed first');
-
-        dialog('Title', 'With message')
-        .effect('fade')
-        .show()
-        .hide(1500)
-        .on('hide', function(){
-          console.log('closed second');
-
-          dialog('Title', 'With message')
-          .effect('scale')
-          .show()
-          .closable()
-          .on('hide', function(){
-            console.log('closed third');
-
-            var h3 = document.createElement('h3');
-            h3.textContent = 'HTML';
-
-            dialog('Title', h3)
-            .effect('scale')
-            // .overlay()
-            .show()
-            .hide(1000)
-            .on('hide', function(){
-              console.log('closed fourth');
-
-              dialog('Click the overlay to close')
-              .effect('slide')
-              .overlay()
-              .show()
-              .on('hide', function(){
-                console.log('closed fifth');
-
-                dialog('Modal')
-                .effect('fade')
-                .closable()
-                .modal()
-                .show()
-                .on('hide', function(){
-                  console.log('closed sixth');
-
-                  dialog('Escape')
-                  .effect('fade')
-                  .overlay()
-                  .show()
-                  .on('hide', function(){
-                    console.log('closed seventh');
-                  });
-                });
-              });
-            });
-          });
-        });
+      var view = new Dialog({
+        title: 'Foo',
+        content: 'bar',
+        confirm: 'Confirm'
       });
 
-    </script>
-  </body>
+      view
+        .effect('fade-and-scale')
+        .show();
+
+      enter(function(){
+        view.show();
+      });
+
+    }());
+  </script>
+</body>
 </html>

@@ -1,0 +1,8 @@
+<div class="Dialog">
+  <span class="Dialog-close" on-click="hide">Close</span>
+  <h3 class="Dialog-title">{title}</h3>
+  <div class="Dialog-content">
+    <div data-html="content"></div>
+    <button data-visible="confirm" class="Dialog-button Button Button--full Button--{type}" on-click="handleConfirm">{confirm}</button>
+  </div>
+</div>
