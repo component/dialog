@@ -6,7 +6,6 @@ components: component.json
 
 build: index.js index.css index.html | components
 	component build --dev
-	myth build/build.css build/build.css
 
 clean:
 	rm -rf components build

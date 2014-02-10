@@ -4,15 +4,13 @@
   "version": "0.0.1",
   "keywords": ["dialog", "ui", "modal"],
   "dependencies": {
-    "component/emitter": "1.0.0",
-    "component/overlay": "0.1.1",
     "component/domify": "*",
+    "component/emitter": "*",
     "component/reactive": "0.14.1",
-    "segmentio/on-escape": "*",
-    "anthonyshort/after-transition": "*"
+    "segmentio/modal": "updates"
   },
   "development": {
-
+    "segmentio/on-enter": "*"
   },
   "scripts": [
     "index.js"

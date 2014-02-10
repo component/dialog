@@ -1,0 +1,40 @@
+<html>
+<head>
+  <link rel="stylesheet" href="../build/build.css" />
+  <style>
+    .Modal {
+      box-shadow: 2px 2px 5px rgba(0,0,0,.4);
+      background-color: white;
+      border-radius: 4px;
+      width: 500px;
+    }
+    .Overlay {
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 100%);
+    }
+  </style>
+</head>
+<body>
+  <script src="../build/build.js"></script>
+  <script>
+    (function () {
+      var Dialog = require('dialog');
+      var enter = require('on-enter');
+
+      var view = new Dialog({
+        title: 'Foo',
+        content: 'bar',
+        confirm: 'Confirm'
+      });
+
+      view
+        .effect('fade-and-scale')
+        .show();
+
+      enter(function(){
+        view.show();
+      });
+
+    }());
+  </script>
+</body>
+</html>

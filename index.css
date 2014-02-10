@@ -1,52 +1,31 @@
 .Dialog {
-  position: fixed;
-  top: 25%;
-  left: 50%;
-  transform: translateX(-50%) translateY(-50%);
   max-width: 600px;
-  min-width: 250px;
+  min-width: 500px;
   background: white;
-  z-index: 1000;
+  position: relative;
 }
-
-/* close */
 
 .Dialog-close {
   display: none;
+  cursor: pointer;
 }
 
 .Dialog.closable .Dialog-close {
   display: block;
 }
 
-/* slide */
+.Dialog-content {
 
-.Dialog.slide {
-  transition: opacity 300ms, transform 300ms;
 }
 
-.Dialog.slide.hide {
-  opacity: 0;
-  transform: translateY(-100%);
+.Dialog-title {
+
 }
 
-/* fade */
+.Dialog-button {
 
-.Dialog.fade {
-  transition: opacity 300ms;
 }
 
-.Dialog.fade.hide {
-  opacity: 0;
-}
-
-/* scale */
-
-.Dialog.scale {
-  transition: transform 300ms;
-  transform: scale(1);
-}
-
-.Dialog.scale.hide {
-  transform: scale(0);
+.Dialog-button.hidden {
+  display: none;
 }

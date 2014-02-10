@@ -1,10 +1,9 @@
-var Emitter = require('emitter');
-var overlay = require('overlay');
 var domify = require('domify');
 var template = require('./index.html');
 var reactive = require('reactive');
-var onEscape = require('on-escape');
-var afterTransition = require('after-transition');
+var modal = require('modal');
+var emitter = require('emitter');
+
 
 /**
  * Initialize a new `Dialog`.
@@ -13,64 +12,52 @@ var afterTransition = require('after-transition');
  */
 function Dialog(options) {
   if(!(this instanceof Dialog)) return new Dialog(options);
-  this.hide = this.hide.bind(this);
-  this.show = this.show.bind(this);
   this.el = domify(template);
   this.reactive = reactive(this.el, options || {}, this);
-};
+  this.modal = modal(this.el).overlay();
+}
+
 
 /**
- * Mixin emitter
+ * Mixin
  */
-Emitter(Dialog.prototype);
+emitter(Dialog.prototype);
+
 
 /**
  * Make the dialog closable
  *
  * @return {Dialog}
  */
-Dialog.prototype.closable = function(){
-  onEscape(this.hide);
-  this.addClass('closable');
+Dialog.prototype.closable =
+Dialog.prototype.closeable = function(){
+  this.el.classList.add('closable');
+  this.modal.closable();
   return this;
 };
 
-/**
- * Add a class
- *
- * @param {String} name
- */
-Dialog.prototype.addClass = function(name){
-  this.el.classList.add(name);
-  return this;
-};
 
 /**
- * Remove a class
- *
- * @param {String} name
+ * Add an effect when showing and hiding
  *
  * @return {Dialog}
  */
-Dialog.prototype.removeClass = function(name){
-  this.el.classList.remove(name);
+Dialog.prototype.effect = function(name){
+  this.modal.effect(name);
   return this;
 };
 
+
 /**
- * Add an overlay
+ * Fired when hitting the confirm button
  *
- * @param {Object} opts
- *
- * @return {Dialog}
+ * @return {void}
  */
-Dialog.prototype.overlay = function(opts){
-  var o = overlay(opts);
-  o.on('hide', this.hide);
-  this.on('hide', o.hide);
-  this.on('showing', o.show);
-  return this;
+Dialog.prototype.handleConfirm = function() {
+  this.emit('confirm');
+  this.hide();
 };
+
 
 /**
  * Show the dialog. Emits "showing" when it
@@ -80,42 +67,21 @@ Dialog.prototype.overlay = function(opts){
  * @return {Dialog}
  */
 Dialog.prototype.show = function(){
-  if(this.hiding === false) return;
-  this.hiding = false;
-  var self = this;
-  this.emit('showing');
-  afterTransition.once(this.el, function(){
-    self.emit('show');
-  });
-  document.body.appendChild(this.el);
-  this.removeClass('hide');
+  this.modal.show();
   return this;
 };
+
 
 /**
  * Hide the dialog.
  *
- * @param {Number} ms Optional delay
- *
  * @return {Dialog}
  */
-Dialog.prototype.hide = function(ms){
-  if(this.hiding === true) return;
-  this.hiding = true;
-  var self = this;
-  onEscape.unbind(this.hide);
-  if (ms) {
-    setTimeout(this.hide, ms);
-    return this;
-  }
-  this.addClass('hide');
-  this.emit('hiding');
-  afterTransition.once(function(){
-    self.emit('hide');
-    self.el.parentNode.removeChild(self.el);
-  });
+Dialog.prototype.hide = function(){
+  this.modal.hide();
   return this;
 };
+
 
 /**
  * @type {Function}
