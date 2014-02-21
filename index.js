@@ -223,6 +223,7 @@ Dialog.prototype.escapable = function(){
 
 Dialog.prototype.show = function(){
   var overlay = this._overlay;
+  var self = this;
 
   // overlay
   if (overlay) {
@@ -235,7 +236,9 @@ Dialog.prototype.show = function(){
 
   // position
   document.body.appendChild(this.el);
-  this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'
+  setTimeout(function() {
+    self.el.style.marginLeft = -(self.el.offsetWidth / 2) + 'px'
+  }, 0);
 
   this._classes.remove('hide');
   this.emit('show');
