@@ -119,10 +119,6 @@ Dialog.prototype.render = function(options){
     pEl.parentNode.insertBefore(msg.el || msg, pEl);
     pEl.parentNode.removeChild(pEl);
   }
-
-  setTimeout(function(){
-    self._classes.remove('hide');
-  }, 0);
 };
 
 /**
