@@ -98,10 +98,10 @@ Dialog.prototype.render = function(options){
     , pEl = query('p', el)
     , msg = options.message;
 
-  events.bind(query('.close', el), 'click', function () {
+  events.bind(query('.close', el), 'click', function (ev) {
+    ev.preventDefault();
     self.emit('close');
     self.hide();
-    return false;
   });
 
   if (titleEl) {
