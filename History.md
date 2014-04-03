@@ -1,4 +1,13 @@
 
+0.1.0 / 2014-04-03
+==================
+
+ * remove jQuery dependency
+ * fix problems with reopening dialog - remove 'hide' class on show
+ * support passing options in overlay() to overlay component
+ * make escapable() public
+ * use component templates to translate HTML
+
 0.0.7 / 2013-05-27 
 ==================
 
