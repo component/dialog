@@ -23,5 +23,6 @@
   ],
   "templates": [
     "template.html"
-  ]
+  ],
+  "demo": "http://component.github.io/dialog/"
 }

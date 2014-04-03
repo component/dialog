@@ -5,6 +5,8 @@
 
   ![js dialog component](http://f.cl.ly/items/0r140j3W323T3c3i2H3a/Screen%20Shot%202012-07-26%20at%203.11.20%20PM.png)
 
+  Live demo is [here](http://component.github.io/dialog/)
+
 ## Installation
 
 ```
