@@ -1,4 +1,10 @@
 
+0.2.0 / 2014-04-05
+==================
+
+ * add Dialog.fixed function to allow for an alternate centering algorithm
+ * fix 'dialog not centered in some cases' issue
+
 0.1.0 / 2014-04-03
 ==================
 
