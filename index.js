@@ -209,6 +209,18 @@ Dialog.prototype.escapable = function(){
 };
 
 /**
+ * Fixed dialogs position can be manipulated through CSS.
+ *
+ * @return {Dialog} for chaining
+ * @api public
+ */
+
+Dialog.prototype.fixed = function(){
+  this._fixed = true;
+  return this;
+}
+
+/**
  * Show the dialog.
  *
  * Emits "show" event.
@@ -231,7 +243,9 @@ Dialog.prototype.show = function(){
 
   // position
   document.body.appendChild(this.el);
-  this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'
+  if (!this._fixed) {
+    this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'
+  }
 
   this._classes.remove('hide');
   this.emit('show');

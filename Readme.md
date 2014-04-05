@@ -62,6 +62,11 @@ $ npm install dialog-component
 
   Add a non-clickable overlay making it modal.
 
+### Dialog#fixed()
+
+  Dialogs are centered by default. If you'd rather use CSS to position the dialog make it `fixed`;
+  no per element CSS properties are added to such dialogs.
+
 ### Dialog#escapable()
 
   This is __private__ as it is implied by other options.
