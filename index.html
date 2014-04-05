@@ -4,6 +4,12 @@
     <title>Dialog</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="./build/build.css" />
+    <style>
+      #dialog.off-center {
+        top: 20px;
+        left: 15%;
+      }
+    </style>
   </head>
   <body>
     <title>Dialog</title>
@@ -64,6 +70,17 @@
                   .show()
                   .on('hide', function(){
                     console.log('closed seventh');
+
+                    dialog('This one is not centered')
+                    .effect('fade')
+                    .closable()
+                    .fixed()
+                    .addClass('off-center')
+                    .show()
+                    .on('hide', function(){
+                      console.log('closed eight');
+                    });
+
                   });
                 });
               });

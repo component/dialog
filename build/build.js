@@ -9286,6 +9286,18 @@ Dialog.prototype.escapable = function(){\n\
 };\n\
 \n\
 /**\n\
+ * Fixed dialogs position can be manipulated through CSS.\n\
+ *\n\
+ * @return {Dialog} for chaining\n\
+ * @api public\n\
+ */\n\
+\n\
+Dialog.prototype.fixed = function(){\n\
+  this._fixed = true;\n\
+  return this;\n\
+}\n\
+\n\
+/**\n\
  * Show the dialog.\n\
  *\n\
  * Emits \"show\" event.\n\
@@ -9296,6 +9308,7 @@ Dialog.prototype.escapable = function(){\n\
 \n\
 Dialog.prototype.show = function(){\n\
   var overlay = this._overlay;\n\
+  var self = this;\n\
 \n\
   // overlay\n\
   if (overlay) {\n\
@@ -9308,8 +9321,11 @@ Dialog.prototype.show = function(){\n\
 \n\
   // position\n\
   document.body.appendChild(this.el);\n\
-  this.el.style.marginLeft = -(this.el.offsetWidth / 2) + 'px'\n\
-\n\
+  if (!this._fixed) {\n\
+    setTimeout(function() {\n\
+      self.el.style.marginLeft = -(self.el.offsetWidth / 2) + 'px'\n\
+    }, 0);\n\
+  }\n\
   this._classes.remove('hide');\n\
   this.emit('show');\n\
   return this;\n\
