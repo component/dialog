@@ -1,4 +1,4 @@
-#dialog {
+.dialog {
   position: fixed;
   left: 50%;
   top: 150px;
@@ -9,17 +9,17 @@
   z-index: 1000;
 }
 
-#dialog .content {
+.dialog .content {
   padding: 15px 20px;
 }
 
-#dialog h1 {
+.dialog h1 {
   margin: 0 0 5px 0;
   font-size: 16px;
   font-weight: normal;
 }
 
-#dialog p {
+.dialog p {
   margin: 0;
   padding: 0;
   font-size: .9em;
@@ -27,7 +27,7 @@
 
 /* close */
 
-#dialog .close {
+.dialog .close {
   position: absolute;
   top: 3px;
   right: 10px;
@@ -38,55 +38,55 @@
   display: none;
 }
 
-#dialog .close em {
+.dialog .close em {
   display: none;
 }
 
-#dialog.closable .close {
+.dialog.closable .close {
   display: block;
 }
 
-#dialog .close:hover {
+.dialog .close:hover {
   color: black;
 }
 
-#dialog .close:active {
+.dialog .close:active {
   margin-top: 1px;
 }
 
 /* slide */
 
-#dialog.slide {
+.dialog.slide {
   -webkit-transition: opacity 300ms, top 300ms;
   -moz-transition: opacity 300ms, top 300ms;
 }
 
-#dialog.slide.hide {
+.dialog.slide.hide {
   opacity: 0;
   top: -500px;
 }
 
 /* fade */
 
-#dialog.fade {
+.dialog.fade {
   -webkit-transition: opacity 300ms;
   -moz-transition: opacity 300ms;
 }
 
-#dialog.fade.hide {
+.dialog.fade.hide {
   opacity: 0;
 }
 
 /* scale */
 
-#dialog.scale {
+.dialog.scale {
   -webkit-transition: -webkit-transform 300ms;
   -moz-transition: -moz-transform 300ms;
   -webkit-transform: scale(1);
   -moz-transform: scale(1);
 }
 
-#dialog.scale.hide {
+.dialog.scale.hide {
   -webkit-transform: scale(0);
   -moz-transform: scale(0);
 }
