@@ -1,4 +1,12 @@
 
+0.3.0 / 2014-08-25
+==================
+
+ * fix CSS for test/demo
+ * removed generic style rules which break user styles
+ * reduced specificity: Changed #dialog to .dialog
+ * component.json: Pin and update deps
+
 0.2.1 / 2014-06-16
 ==================
 
