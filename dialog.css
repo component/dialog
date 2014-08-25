@@ -13,18 +13,6 @@
   padding: 15px 20px;
 }
 
-.dialog h1 {
-  margin: 0 0 5px 0;
-  font-size: 16px;
-  font-weight: normal;
-}
-
-.dialog p {
-  margin: 0;
-  padding: 0;
-  font-size: .9em;
-}
-
 /* close */
 
 .dialog .close {
