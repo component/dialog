@@ -241,7 +241,8 @@ function mixin(obj) {\n\
  * @api public\n\
  */\n\
 \n\
-Emitter.prototype.on = function(event, fn){\n\
+Emitter.prototype.on =\n\
+Emitter.prototype.addEventListener = function(event, fn){\n\
   this._callbacks = this._callbacks || {};\n\
   (this._callbacks[event] = this._callbacks[event] || [])\n\
     .push(fn);\n\
@@ -267,7 +268,7 @@ Emitter.prototype.once = function(event, fn){\n\
     fn.apply(this, arguments);\n\
   }\n\
 \n\
-  fn._off = on;\n\
+  on.fn = fn;\n\
   this.on(event, on);\n\
   return this;\n\
 };\n\
@@ -284,7 +285,8 @@ Emitter.prototype.once = function(event, fn){\n\
 \n\
 Emitter.prototype.off =\n\
 Emitter.prototype.removeListener =\n\
-Emitter.prototype.removeAllListeners = function(event, fn){\n\
+Emitter.prototype.removeAllListeners =\n\
+Emitter.prototype.removeEventListener = function(event, fn){\n\
   this._callbacks = this._callbacks || {};\n\
 \n\
   // all\n\
@@ -304,8 +306,14 @@ Emitter.prototype.removeAllListeners = function(event, fn){\n\
   }\n\
 \n\
   // remove specific handler\n\
-  var i = callbacks.indexOf(fn._off || fn);\n\
-  if (~i) callbacks.splice(i, 1);\n\
+  var cb;\n\
+  for (var i = 0; i < callbacks.length; i++) {\n\
+    cb = callbacks[i];\n\
+    if (cb === fn || cb.fn === fn) {\n\
+      callbacks.splice(i, 1);\n\
+      break;\n\
+    }\n\
+  }\n\
   return this;\n\
 };\n\
 \n\
@@ -358,1055 +366,6 @@ Emitter.prototype.hasListeners = function(event){\n\
 };\n\
 //@ sourceURL=component-emitter/index.js"
 ));
-require.register("component-type/index.js", Function("exports, require, module",
-"\n\
-/**\n\
- * toString ref.\n\
- */\n\
-\n\
-var toString = Object.prototype.toString;\n\
-\n\
-/**\n\
- * Return the type of `val`.\n\
- *\n\
- * @param {Mixed} val\n\
- * @return {String}\n\
- * @api public\n\
- */\n\
-\n\
-module.exports = function(val){\n\
-  switch (toString.call(val)) {\n\
-    case '[object Function]': return 'function';\n\
-    case '[object Date]': return 'date';\n\
-    case '[object RegExp]': return 'regexp';\n\
-    case '[object Arguments]': return 'arguments';\n\
-    case '[object Array]': return 'array';\n\
-    case '[object String]': return 'string';\n\
-  }\n\
-\n\
-  if (val === null) return 'null';\n\
-  if (val === undefined) return 'undefined';\n\
-  if (val && val.nodeType === 1) return 'element';\n\
-  if (val === Object(val)) return 'object';\n\
-\n\
-  return typeof val;\n\
-};\n\
-//@ sourceURL=component-type/index.js"
-));
-require.register("component-matches-selector/index.js", Function("exports, require, module",
-"/**\n\
- * Module dependencies.\n\
- */\n\
-\n\
-var query = require('query');\n\
-\n\
-/**\n\
- * Element prototype.\n\
- */\n\
-\n\
-var proto = Element.prototype;\n\
-\n\
-/**\n\
- * Vendor function.\n\
- */\n\
-\n\
-var vendor = proto.matches\n\
-  || proto.webkitMatchesSelector\n\
-  || proto.mozMatchesSelector\n\
-  || proto.msMatchesSelector\n\
-  || proto.oMatchesSelector;\n\
-\n\
-/**\n\
- * Expose `match()`.\n\
- */\n\
-\n\
-module.exports = match;\n\
-\n\
-/**\n\
- * Match `el` to `selector`.\n\
- *\n\
- * @param {Element} el\n\
- * @param {String} selector\n\
- * @return {Boolean}\n\
- * @api public\n\
- */\n\
-\n\
-function match(el, selector) {\n\
-  if (vendor) return vendor.call(el, selector);\n\
-  var nodes = query.all(selector, el.parentNode);\n\
-  for (var i = 0; i < nodes.length; ++i) {\n\
-    if (nodes[i] == el) return true;\n\
-  }\n\
-  return false;\n\
-}\n\
-//@ sourceURL=component-matches-selector/index.js"
-));
-require.register("component-delegate/index.js", Function("exports, require, module",
-"\n\
-/**\n\
- * Module dependencies.\n\
- */\n\
-\n\
-var matches = require('matches-selector')\n\
-  , event = require('event');\n\
-\n\
-/**\n\
- * Delegate event `type` to `selector`\n\
- * and invoke `fn(e)`. A callback function\n\
- * is returned which may be passed to `.unbind()`.\n\
- *\n\
- * @param {Element} el\n\
- * @param {String} selector\n\
- * @param {String} type\n\
- * @param {Function} fn\n\
- * @param {Boolean} capture\n\
- * @return {Function}\n\
- * @api public\n\
- */\n\
-\n\
-exports.bind = function(el, selector, type, fn, capture){\n\
-  return event.bind(el, type, function(e){\n\
-    if (matches(e.target, selector)) fn(e);\n\
-  }, capture);\n\
-  return callback;\n\
-};\n\
-\n\
-/**\n\
- * Unbind event `type`'s callback `fn`.\n\
- *\n\
- * @param {Element} el\n\
- * @param {String} type\n\
- * @param {Function} fn\n\
- * @param {Boolean} capture\n\
- * @api public\n\
- */\n\
-\n\
-exports.unbind = function(el, type, fn, capture){\n\
-  event.unbind(el, type, fn, capture);\n\
-};\n\
-//@ sourceURL=component-delegate/index.js"
-));
-require.register("component-indexof/index.js", Function("exports, require, module",
-"\n\
-var indexOf = [].indexOf;\n\
-\n\
-module.exports = function(arr, obj){\n\
-  if (indexOf) return arr.indexOf(obj);\n\
-  for (var i = 0; i < arr.length; ++i) {\n\
-    if (arr[i] === obj) return i;\n\
-  }\n\
-  return -1;\n\
-};//@ sourceURL=component-indexof/index.js"
-));
-require.register("component-css/index.js", Function("exports, require, module",
-"\n\
-/**\n\
- * Properties to ignore appending \"px\".\n\
- */\n\
-\n\
-var ignore = {\n\
-  columnCount: true,\n\
-  fillOpacity: true,\n\
-  fontWeight: true,\n\
-  lineHeight: true,\n\
-  opacity: true,\n\
-  orphans: true,\n\
-  widows: true,\n\
-  zIndex: true,\n\
-  zoom: true\n\
-};\n\
-\n\
-/**\n\
- * Set `el` css values.\n\
- *\n\
- * @param {Element} el\n\
- * @param {Object} obj\n\
- * @return {Element}\n\
- * @api public\n\
- */\n\
-\n\
-module.exports = function(el, obj){\n\
-  for (var key in obj) {\n\
-    var val = obj[key];\n\
-    if ('number' == typeof val && !ignore[key]) val += 'px';\n\
-    el.style[key] = val;\n\
-  }\n\
-  return el;\n\
-};\n\
-//@ sourceURL=component-css/index.js"
-));
-require.register("component-sort/index.js", Function("exports, require, module",
-"\n\
-/**\n\
- * Expose `sort`.\n\
- */\n\
-\n\
-exports = module.exports = sort;\n\
-\n\
-/**\n\
- * Sort `el`'s children with the given `fn(a, b)`.\n\
- *\n\
- * @param {Element} el\n\
- * @param {Function} fn\n\
- * @api public\n\
- */\n\
-\n\
-function sort(el, fn) {\n\
-  var arr = [].slice.call(el.children).sort(fn);\n\
-  var frag = document.createDocumentFragment();\n\
-  for (var i = 0; i < arr.length; i++) {\n\
-    frag.appendChild(arr[i]);\n\
-  }\n\
-  el.appendChild(frag);\n\
-};\n\
-\n\
-/**\n\
- * Sort descending.\n\
- *\n\
- * @param {Element} el\n\
- * @param {Function} fn\n\
- * @api public\n\
- */\n\
-\n\
-exports.desc = function(el, fn){\n\
-  sort(el, function(a, b){\n\
-    return ~fn(a, b) + 1;\n\
-  });\n\
-};\n\
-\n\
-/**\n\
- * Sort ascending.\n\
- */\n\
-\n\
-exports.asc = sort;\n\
-//@ sourceURL=component-sort/index.js"
-));
-require.register("component-value/index.js", Function("exports, require, module",
-"\n\
-/**\n\
- * Module dependencies.\n\
- */\n\
-\n\
-var typeOf = require('type');\n\
-\n\
-/**\n\
- * Set or get `el`'s' value.\n\
- *\n\
- * @param {Element} el\n\
- * @param {Mixed} val\n\
- * @return {Mixed}\n\
- * @api public\n\
- */\n\
-\n\
-module.exports = function(el, val){\n\
-  if (2 == arguments.length) return set(el, val);\n\
-  return get(el);\n\
-};\n\
-\n\
-/**\n\
- * Get `el`'s value.\n\
- */\n\
-\n\
-function get(el) {\n\
-  switch (type(el)) {\n\
-    case 'checkbox':\n\
-    case 'radio':\n\
-      if (el.checked) {\n\
-        var attr = el.getAttribute('value');\n\
-        return null == attr ? true : attr;\n\
-      } else {\n\
-        return false;\n\
-      }\n\
-    case 'radiogroup':\n\
-      for (var i = 0, radio; radio = el[i]; i++) {\n\
-        if (radio.checked) return radio.value;\n\
-      }\n\
-      break;\n\
-    case 'select':\n\
-      for (var i = 0, option; option = el.options[i]; i++) {\n\
-        if (option.selected) return option.value;\n\
-      }\n\
-      break;\n\
-    default:\n\
-      return el.value;\n\
-  }\n\
-}\n\
-\n\
-/**\n\
- * Set `el`'s value.\n\
- */\n\
-\n\
-function set(el, val) {\n\
-  switch (type(el)) {\n\
-    case 'checkbox':\n\
-    case 'radio':\n\
-      if (val) {\n\
-        el.checked = true;\n\
-      } else {\n\
-        el.checked = false;\n\
-      }\n\
-      break;\n\
-    case 'radiogroup':\n\
-      for (var i = 0, radio; radio = el[i]; i++) {\n\
-        radio.checked = radio.value === val;\n\
-      }\n\
-      break;\n\
-    case 'select':\n\
-      for (var i = 0, option; option = el.options[i]; i++) {\n\
-        option.selected = option.value === val;\n\
-      }\n\
-      break;\n\
-    default:\n\
-      el.value = val;\n\
-  }\n\
-}\n\
-\n\
-/**\n\
- * Element type.\n\
- */\n\
-\n\
-function type(el) {\n\
-  var group = 'array' == typeOf(el) || 'object' == typeOf(el);\n\
-  if (group) el = el[0];\n\
-  var name = el.nodeName.toLowerCase();\n\
-  var type = el.getAttribute('type');\n\
-\n\
-  if (group && type && 'radio' == type.toLowerCase()) return 'radiogroup';\n\
-  if ('input' == name && type && 'checkbox' == type.toLowerCase()) return 'checkbox';\n\
-  if ('input' == name && type && 'radio' == type.toLowerCase()) return 'radio';\n\
-  if ('select' == name) return 'select';\n\
-  return name;\n\
-}\n\
-//@ sourceURL=component-value/index.js"
-));
-require.register("component-dom/index.js", Function("exports, require, module",
-"/**\n\
- * Module dependencies.\n\
- */\n\
-\n\
-var delegate = require('delegate');\n\
-var classes = require('classes');\n\
-var indexof = require('indexof');\n\
-var domify = require('domify');\n\
-var events = require('event');\n\
-var value = require('value');\n\
-var query = require('query');\n\
-var type = require('type');\n\
-var css = require('css');\n\
-\n\
-/**\n\
- * Attributes supported.\n\
- */\n\
-\n\
-var attrs = [\n\
-  'id',\n\
-  'src',\n\
-  'rel',\n\
-  'cols',\n\
-  'rows',\n\
-  'name',\n\
-  'href',\n\
-  'title',\n\
-  'style',\n\
-  'width',\n\
-  'height',\n\
-  'tabindex',\n\
-  'placeholder'\n\
-];\n\
-\n\
-/**\n\
- * Expose `dom()`.\n\
- */\n\
-\n\
-exports = module.exports = dom;\n\
-\n\
-/**\n\
- * Expose supported attrs.\n\
- */\n\
-\n\
-exports.attrs = attrs;\n\
-\n\
-/**\n\
- * Return a dom `List` for the given\n\
- * `html`, selector, or element.\n\
- *\n\
- * @param {String|Element|List}\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-function dom(selector, context) {\n\
-  // array\n\
-  if (Array.isArray(selector)) {\n\
-    return new List(selector);\n\
-  }\n\
-\n\
-  // List\n\
-  if (selector instanceof List) {\n\
-    return selector;\n\
-  }\n\
-\n\
-  // node\n\
-  if (selector.nodeName) {\n\
-    return new List([selector]);\n\
-  }\n\
-\n\
-  if ('string' != typeof selector) {\n\
-    throw new TypeError('invalid selector');\n\
-  }\n\
-\n\
-  // html\n\
-  if ('<' == selector.charAt(0)) {\n\
-    return new List([domify(selector)], selector);\n\
-  }\n\
-\n\
-  // selector\n\
-  var ctx = context\n\
-    ? (context.els ? context.els[0] : context)\n\
-    : document;\n\
-\n\
-  return new List(query.all(selector, ctx), selector);\n\
-}\n\
-\n\
-/**\n\
- * Expose `List` constructor.\n\
- */\n\
-\n\
-exports.List = List;\n\
-\n\
-/**\n\
- * Initialize a new `List` with the\n\
- * given array-ish of `els` and `selector`\n\
- * string.\n\
- *\n\
- * @param {Mixed} els\n\
- * @param {String} selector\n\
- * @api private\n\
- */\n\
-\n\
-function List(els, selector) {\n\
-  this.els = els || [];\n\
-  this.selector = selector;\n\
-}\n\
-\n\
-/**\n\
- * Enumerable iterator.\n\
- */\n\
-\n\
-List.prototype.__iterate__ = function(){\n\
-  var self = this;\n\
-  return {\n\
-    length: function(){ return self.els.length },\n\
-    get: function(i){ return new List([self.els[i]]) }\n\
-  }\n\
-};\n\
-\n\
-/**\n\
- * Remove elements from the DOM.\n\
- *\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.remove = function(){\n\
-  for (var i = 0; i < this.els.length; i++) {\n\
-    var el = this.els[i];\n\
-    var parent = el.parentNode;\n\
-    if (parent) parent.removeChild(el);\n\
-  }\n\
-};\n\
-\n\
-/**\n\
- * Set attribute `name` to `val`, or get attr `name`.\n\
- *\n\
- * @param {String} name\n\
- * @param {String} [val]\n\
- * @return {String|List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.attr = function(name, val){\n\
-  // get\n\
-  if (1 == arguments.length) {\n\
-    return this.els[0] && this.els[0].getAttribute(name);\n\
-  }\n\
-\n\
-  // remove\n\
-  if (null == val) {\n\
-    return this.removeAttr(name);\n\
-  }\n\
-\n\
-  // set\n\
-  return this.forEach(function(el){\n\
-    el.setAttribute(name, val);\n\
-  });\n\
-};\n\
-\n\
-/**\n\
- * Remove attribute `name`.\n\
- *\n\
- * @param {String} name\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.removeAttr = function(name){\n\
-  return this.forEach(function(el){\n\
-    el.removeAttribute(name);\n\
-  });\n\
-};\n\
-\n\
-/**\n\
- * Set property `name` to `val`, or get property `name`.\n\
- *\n\
- * @param {String} name\n\
- * @param {String} [val]\n\
- * @return {Object|List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.prop = function(name, val){\n\
-  if (1 == arguments.length) {\n\
-    return this.els[0] && this.els[0][name];\n\
-  }\n\
-\n\
-  return this.forEach(function(el){\n\
-    el[name] = val;\n\
-  });\n\
-};\n\
-\n\
-/**\n\
- * Get the first element's value or set selected\n\
- * element values to `val`.\n\
- *\n\
- * @param {Mixed} [val]\n\
- * @return {Mixed}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.val =\n\
-List.prototype.value = function(val){\n\
-  if (0 == arguments.length) {\n\
-    return this.els[0]\n\
-      ? value(this.els[0])\n\
-      : undefined;\n\
-  }\n\
-\n\
-  return this.forEach(function(el){\n\
-    value(el, val);\n\
-  });\n\
-};\n\
-\n\
-/**\n\
- * Return a cloned `List` with all elements cloned.\n\
- *\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.clone = function(){\n\
-  var arr = [];\n\
-  for (var i = 0, len = this.els.length; i < len; ++i) {\n\
-    arr.push(this.els[i].cloneNode(true));\n\
-  }\n\
-  return new List(arr);\n\
-};\n\
-\n\
-/**\n\
- * Prepend `val`.\n\
- *\n\
- * @param {String|Element|List} val\n\
- * @return {List} new list\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.prepend = function(val){\n\
-  var el = this.els[0];\n\
-  if (!el) return this;\n\
-  val = dom(val);\n\
-  for (var i = 0; i < val.els.length; ++i) {\n\
-    if (el.children.length) {\n\
-      el.insertBefore(val.els[i], el.firstChild);\n\
-    } else {\n\
-      el.appendChild(val.els[i]);\n\
-    }\n\
-  }\n\
-  return val;\n\
-};\n\
-\n\
-/**\n\
- * Append `val`.\n\
- *\n\
- * @param {String|Element|List} val\n\
- * @return {List} new list\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.append = function(val){\n\
-  var el = this.els[0];\n\
-  if (!el) return this;\n\
-  val = dom(val);\n\
-  for (var i = 0; i < val.els.length; ++i) {\n\
-    el.appendChild(val.els[i]);\n\
-  }\n\
-  return val;\n\
-};\n\
-\n\
-/**\n\
- * Append self's `el` to `val`\n\
- *\n\
- * @param {String|Element|List} val\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.appendTo = function(val){\n\
-  dom(val).append(this);\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Return a `List` containing the element at `i`.\n\
- *\n\
- * @param {Number} i\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.at = function(i){\n\
-  return new List([this.els[i]], this.selector);\n\
-};\n\
-\n\
-/**\n\
- * Return a `List` containing the first element.\n\
- *\n\
- * @param {Number} i\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.first = function(){\n\
-  return new List([this.els[0]], this.selector);\n\
-};\n\
-\n\
-/**\n\
- * Return a `List` containing the last element.\n\
- *\n\
- * @param {Number} i\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.last = function(){\n\
-  return new List([this.els[this.els.length - 1]], this.selector);\n\
-};\n\
-\n\
-/**\n\
- * Return an `Element` at `i`.\n\
- *\n\
- * @param {Number} i\n\
- * @return {Element}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.get = function(i){\n\
-  return this.els[i || 0];\n\
-};\n\
-\n\
-/**\n\
- * Return list length.\n\
- *\n\
- * @return {Number}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.length = function(){\n\
-  return this.els.length;\n\
-};\n\
-\n\
-/**\n\
- * Return element text.\n\
- *\n\
- * @param {String} str\n\
- * @return {String|List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.text = function(str){\n\
-  // TODO: real impl\n\
-  if (1 == arguments.length) {\n\
-    this.forEach(function(el){\n\
-      el.textContent = str;\n\
-    });\n\
-    return this;\n\
-  }\n\
-\n\
-  var str = '';\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    str += this.els[i].textContent;\n\
-  }\n\
-  return str;\n\
-};\n\
-\n\
-/**\n\
- * Return element html.\n\
- *\n\
- * @return {String} html\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.html = function(html){\n\
-  if (1 == arguments.length) {\n\
-    this.forEach(function(el){\n\
-      el.innerHTML = html;\n\
-    });\n\
-  }\n\
-  // TODO: real impl\n\
-  return this.els[0] && this.els[0].innerHTML;\n\
-};\n\
-\n\
-/**\n\
- * Bind to `event` and invoke `fn(e)`. When\n\
- * a `selector` is given then events are delegated.\n\
- *\n\
- * @param {String} event\n\
- * @param {String} [selector]\n\
- * @param {Function} fn\n\
- * @param {Boolean} capture\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.on = function(event, selector, fn, capture){\n\
-  if ('string' == typeof selector) {\n\
-    for (var i = 0; i < this.els.length; ++i) {\n\
-      fn._delegate = delegate.bind(this.els[i], selector, event, fn, capture);\n\
-    }\n\
-    return this;\n\
-  }\n\
-\n\
-  capture = fn;\n\
-  fn = selector;\n\
-\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    events.bind(this.els[i], event, fn, capture);\n\
-  }\n\
-\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Unbind to `event` and invoke `fn(e)`. When\n\
- * a `selector` is given then delegated event\n\
- * handlers are unbound.\n\
- *\n\
- * @param {String} event\n\
- * @param {String} [selector]\n\
- * @param {Function} fn\n\
- * @param {Boolean} capture\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.off = function(event, selector, fn, capture){\n\
-  if ('string' == typeof selector) {\n\
-    for (var i = 0; i < this.els.length; ++i) {\n\
-      // TODO: add selector support back\n\
-      delegate.unbind(this.els[i], event, fn._delegate, capture);\n\
-    }\n\
-    return this;\n\
-  }\n\
-\n\
-  capture = fn;\n\
-  fn = selector;\n\
-\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    events.unbind(this.els[i], event, fn, capture);\n\
-  }\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Iterate elements and invoke `fn(list, i)`.\n\
- *\n\
- * @param {Function} fn\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.each = function(fn){\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    fn(new List([this.els[i]], this.selector), i);\n\
-  }\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Iterate elements and invoke `fn(el, i)`.\n\
- *\n\
- * @param {Function} fn\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.forEach = function(fn){\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    fn(this.els[i], i);\n\
-  }\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Map elements invoking `fn(list, i)`.\n\
- *\n\
- * @param {Function} fn\n\
- * @return {Array}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.map = function(fn){\n\
-  var arr = [];\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    arr.push(fn(new List([this.els[i]], this.selector), i));\n\
-  }\n\
-  return arr;\n\
-};\n\
-\n\
-/**\n\
- * Filter elements invoking `fn(list, i)`, returning\n\
- * a new `List` of elements when a truthy value is returned.\n\
- *\n\
- * @param {Function} fn\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.select =\n\
-List.prototype.filter = function(fn){\n\
-  var el;\n\
-  var list = new List([], this.selector);\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    if (fn(new List([el], this.selector), i)) list.els.push(el);\n\
-  }\n\
-  return list;\n\
-};\n\
-\n\
-/**\n\
- * Filter elements invoking `fn(list, i)`, returning\n\
- * a new `List` of elements when a falsey value is returned.\n\
- *\n\
- * @param {Function} fn\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.reject = function(fn){\n\
-  var el;\n\
-  var list = new List([], this.selector);\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    if (!fn(new List([el], this.selector), i)) list.els.push(el);\n\
-  }\n\
-  return list;\n\
-};\n\
-\n\
-/**\n\
- * Add the given class `name`.\n\
- *\n\
- * @param {String} name\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.addClass = function(name){\n\
-  var el;\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    el._classes = el._classes || classes(el);\n\
-    el._classes.add(name);\n\
-  }\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Remove the given class `name`.\n\
- *\n\
- * @param {String|RegExp} name\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.removeClass = function(name){\n\
-  var el;\n\
-\n\
-  if ('regexp' == type(name)) {\n\
-    for (var i = 0; i < this.els.length; ++i) {\n\
-      el = this.els[i];\n\
-      el._classes = el._classes || classes(el);\n\
-      var arr = el._classes.array();\n\
-      for (var j = 0; j < arr.length; j++) {\n\
-        if (name.test(arr[j])) {\n\
-          el._classes.remove(arr[j]);\n\
-        }\n\
-      }\n\
-    }\n\
-    return this;\n\
-  }\n\
-\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    el._classes = el._classes || classes(el);\n\
-    el._classes.remove(name);\n\
-  }\n\
-\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Toggle the given class `name`,\n\
- * optionally a `bool` may be given\n\
- * to indicate that the class should\n\
- * be added when truthy.\n\
- *\n\
- * @param {String} name\n\
- * @param {Boolean} bool\n\
- * @return {List} self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.toggleClass = function(name, bool){\n\
-  var el;\n\
-  var fn = 'toggle';\n\
-\n\
-  // toggle with boolean\n\
-  if (2 == arguments.length) {\n\
-    fn = bool ? 'add' : 'remove';\n\
-  }\n\
-\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    el._classes = el._classes || classes(el);\n\
-    el._classes[fn](name);\n\
-  }\n\
-\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Check if the given class `name` is present.\n\
- *\n\
- * @param {String} name\n\
- * @return {Boolean}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.hasClass = function(name){\n\
-  var el;\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    el._classes = el._classes || classes(el);\n\
-    if (el._classes.has(name)) return true;\n\
-  }\n\
-  return false;\n\
-};\n\
-\n\
-/**\n\
- * Set CSS `prop` to `val` or get `prop` value.\n\
- * Also accepts an object (`prop`: `val`)\n\
- *\n\
- * @param {String} prop\n\
- * @param {Mixed} val\n\
- * @return {List|String}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.css = function(prop, val){\n\
-  if (2 == arguments.length) {\n\
-    var obj = {};\n\
-    obj[prop] = val;\n\
-    return this.setStyle(obj);\n\
-  }\n\
-\n\
-  if ('object' == type(prop)) {\n\
-    return this.setStyle(prop);\n\
-  }\n\
-\n\
-  return this.getStyle(prop);\n\
-};\n\
-\n\
-/**\n\
- * Set CSS `props`.\n\
- *\n\
- * @param {Object} props\n\
- * @return {List} self\n\
- * @api private\n\
- */\n\
-\n\
-List.prototype.setStyle = function(props){\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    css(this.els[i], props);\n\
-  }\n\
-  return this;\n\
-};\n\
-\n\
-/**\n\
- * Get CSS `prop` value.\n\
- *\n\
- * @param {String} prop\n\
- * @return {String}\n\
- * @api private\n\
- */\n\
-\n\
-List.prototype.getStyle = function(prop){\n\
-  var el = this.els[0];\n\
-  if (el) return el.style[prop];\n\
-};\n\
-\n\
-/**\n\
- * Find children matching the given `selector`.\n\
- *\n\
- * @param {String} selector\n\
- * @return {List}\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.find = function(selector){\n\
-  return dom(selector, this);\n\
-};\n\
-\n\
-/**\n\
- * Empty the dom list\n\
- *\n\
- * @return self\n\
- * @api public\n\
- */\n\
-\n\
-List.prototype.empty = function(){\n\
-  var elem, el;\n\
-\n\
-  for (var i = 0; i < this.els.length; ++i) {\n\
-    el = this.els[i];\n\
-    while (el.firstChild) {\n\
-      el.removeChild(el.firstChild);\n\
-    }\n\
-  }\n\
-\n\
-  return this;\n\
-}\n\
-\n\
-/**\n\
- * Attribute accessors.\n\
- */\n\
-\n\
-attrs.forEach(function(name){\n\
-  List.prototype[name] = function(val){\n\
-    if (0 == arguments.length) return this.attr(name);\n\
-    return this.attr(name, val);\n\
-  };\n\
-});\n\
-\n\
-//@ sourceURL=component-dom/index.js"
-));
 require.register("component-overlay/index.js", Function("exports, require, module",
 "\n\
 /**\n\
@@ -1414,8 +373,10 @@ require.register("component-overlay/index.js", Function("exports, require, modul
  */\n\
 \n\
 var Emitter = require('emitter');\n\
-var tmpl = require('./template');\n\
-var o = require('dom');\n\
+var tmpl = require('./template.html');\n\
+var domify = require('domify');\n\
+var event = require('event');\n\
+var classes = require('classes');\n\
 \n\
 /**\n\
  * Expose `overlay()`.\n\
@@ -1446,7 +407,7 @@ function overlay(options){\n\
   }\n\
 \n\
   return new Overlay(options);\n\
-};\n\
+}\n\
 \n\
 /**\n\
  * Initialize a new `Overlay`.\n\
@@ -1458,11 +419,14 @@ function overlay(options){\n\
 function Overlay(options) {\n\
   Emitter.call(this);\n\
   options = options || {};\n\
-  this.target = options.target || 'body';\n\
+  this.target = options.target || document.body;\n\
   this.closable = options.closable;\n\
-  this.el = o(tmpl);\n\
-  this.el.appendTo(this.target);\n\
-  if (this.closable) this.el.on('click', this.hide.bind(this));\n\
+  this.el = domify(tmpl);\n\
+  this.target.appendChild(this.el);\n\
+  if (this.closable) {\n\
+\tevent.bind(this.el, 'click', this.hide.bind(this));\n\
+    classes(this.el).add('closable');\n\
+  }\n\
 }\n\
 \n\
 /**\n\
@@ -1482,7 +446,7 @@ Emitter(Overlay.prototype);\n\
 \n\
 Overlay.prototype.show = function(){\n\
   this.emit('show');\n\
-  this.el.removeClass('hide');\n\
+  classes(this.el).remove('hidden');\n\
   return this;\n\
 };\n\
 \n\
@@ -1512,18 +476,14 @@ Overlay.prototype.hide = function(){\n\
 Overlay.prototype.remove = function(){\n\
   var self = this;\n\
   this.emit('close');\n\
-  this.el.addClass('hide');\n\
+  classes(this.el).add('hidden');\n\
   setTimeout(function(){\n\
-    self.el.remove();\n\
-  }, 2000);\n\
+    self.target.removeChild(self.el);\n\
+  }, 350);\n\
   return this;\n\
 };\n\
 \n\
 //@ sourceURL=component-overlay/index.js"
-));
-require.register("component-overlay/template.js", Function("exports, require, module",
-"module.exports = '<div class=\"overlay hide\"></div>\\n\
-';//@ sourceURL=component-overlay/template.js"
 ));
 require.register("component-domify/index.js", Function("exports, require, module",
 "\n\
@@ -1651,6 +611,15 @@ exports.unbind = function(el, type, fn, capture){\n\
   el[unbind](prefix + type, fn, capture || false);\n\
   return fn;\n\
 };//@ sourceURL=component-event/index.js"
+));
+require.register("component-indexof/index.js", Function("exports, require, module",
+"module.exports = function(arr, obj){\n\
+  if (arr.indexOf) return arr.indexOf(obj);\n\
+  for (var i = 0; i < arr.length; ++i) {\n\
+    if (arr[i] === obj) return i;\n\
+  }\n\
+  return -1;\n\
+};//@ sourceURL=component-indexof/index.js"
 ));
 require.register("component-classes/index.js", Function("exports, require, module",
 "/**\n\
@@ -1914,7 +883,6 @@ require.relative = function (parent) {\n\
 \n\
 \n\
 require.register(\"browser/debug.js\", function(module, exports, require){\n\
-\n\
 module.exports = function(type){\n\
   return function(){\n\
   }\n\
@@ -2090,7 +1058,24 @@ var JsDiff = (function() {\n\
 \n\
   var LineDiff = new Diff();\n\
   LineDiff.tokenize = function(value) {\n\
-    return value.split(/^/m);\n\
+    var retLines = [],\n\
+        lines = value.split(/^/m);\n\
+\n\
+    for(var i = 0; i < lines.length; i++) {\n\
+      var line = lines[i],\n\
+          lastLine = lines[i - 1];\n\
+\n\
+      // Merge lines that may contain windows new lines\n\
+      if (line == '\\n\
+' && lastLine && lastLine[lastLine.length - 1] === '\\r') {\n\
+        retLines[retLines.length - 1] += '\\n\
+';\n\
+      } else if (line) {\n\
+        retLines.push(line);\n\
+      }\n\
+    }\n\
+\n\
+    return retLines;\n\
   };\n\
 \n\
   return {\n\
@@ -2288,8 +1273,22 @@ if (typeof module !== 'undefined') {\n\
 \n\
 }); // module: browser/diff.js\n\
 \n\
-require.register(\"browser/events.js\", function(module, exports, require){\n\
+require.register(\"browser/escape-string-regexp.js\", function(module, exports, require){\n\
+'use strict';\n\
 \n\
+var matchOperatorsRe = /[|\\\\{}()[\\]^$+*?.]/g;\n\
+\n\
+module.exports = function (str) {\n\
+  if (typeof str !== 'string') {\n\
+    throw new TypeError('Expected a string');\n\
+  }\n\
+\n\
+  return str.replace(matchOperatorsRe,  '\\\\$&');\n\
+};\n\
+\n\
+}); // module: browser/escape-string-regexp.js\n\
+\n\
+require.register(\"browser/events.js\", function(module, exports, require){\n\
 /**\n\
  * Module exports.\n\
  */\n\
@@ -2467,11 +1466,16 @@ EventEmitter.prototype.emit = function (name) {\n\
 \n\
   return true;\n\
 };\n\
+\n\
 }); // module: browser/events.js\n\
 \n\
 require.register(\"browser/fs.js\", function(module, exports, require){\n\
 \n\
 }); // module: browser/fs.js\n\
+\n\
+require.register(\"browser/glob.js\", function(module, exports, require){\n\
+\n\
+}); // module: browser/glob.js\n\
 \n\
 require.register(\"browser/path.js\", function(module, exports, require){\n\
 \n\
@@ -2574,28 +1578,28 @@ Progress.prototype.draw = function(ctx){\n\
       , y = half\n\
       , rad = half - 1\n\
       , fontSize = this._fontSize;\n\
-  \n\
+\n\
     ctx.font = fontSize + 'px ' + this._font;\n\
-  \n\
+\n\
     var angle = Math.PI * 2 * (percent / 100);\n\
     ctx.clearRect(0, 0, size, size);\n\
-  \n\
+\n\
     // outer circle\n\
     ctx.strokeStyle = '#9f9f9f';\n\
     ctx.beginPath();\n\
     ctx.arc(x, y, rad, 0, angle, false);\n\
     ctx.stroke();\n\
-  \n\
+\n\
     // inner circle\n\
     ctx.strokeStyle = '#eee';\n\
     ctx.beginPath();\n\
     ctx.arc(x, y, rad - 1, 0, angle, true);\n\
     ctx.stroke();\n\
-  \n\
+\n\
     // text\n\
     var text = this._text || (percent | 0) + '%'\n\
       , w = ctx.measureText(text).width;\n\
-  \n\
+\n\
     ctx.fillText(\n\
         text\n\
       , x - w / 2 + 1\n\
@@ -2607,7 +1611,6 @@ Progress.prototype.draw = function(ctx){\n\
 }); // module: browser/progress.js\n\
 \n\
 require.register(\"browser/tty.js\", function(module, exports, require){\n\
-\n\
 exports.isatty = function(){\n\
   return true;\n\
 };\n\
@@ -2624,7 +1627,6 @@ exports.getWindowSize = function(){\n\
 }); // module: browser/tty.js\n\
 \n\
 require.register(\"context.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Expose `Context`.\n\
  */\n\
@@ -2662,9 +1664,24 @@ Context.prototype.runnable = function(runnable){\n\
  */\n\
 \n\
 Context.prototype.timeout = function(ms){\n\
+  if (arguments.length === 0) return this.runnable().timeout();\n\
   this.runnable().timeout(ms);\n\
   return this;\n\
 };\n\
+\n\
+/**\n\
+ * Set test timeout `enabled`.\n\
+ *\n\
+ * @param {Boolean} enabled\n\
+ * @return {Context} self\n\
+ * @api private\n\
+ */\n\
+\n\
+Context.prototype.enableTimeouts = function (enabled) {\n\
+  this.runnable().enableTimeouts(enabled);\n\
+  return this;\n\
+};\n\
+\n\
 \n\
 /**\n\
  * Set test slowness threshold `ms`.\n\
@@ -2697,7 +1714,6 @@ Context.prototype.inspect = function(){\n\
 }); // module: context.js\n\
 \n\
 require.register(\"hook.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -2754,14 +1770,14 @@ Hook.prototype.error = function(err){\n\
 }); // module: hook.js\n\
 \n\
 require.register(\"interfaces/bdd.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
 \n\
 var Suite = require('../suite')\n\
   , Test = require('../test')\n\
-  , utils = require('../utils');\n\
+  , utils = require('../utils')\n\
+  , escapeRe = require('browser/escape-string-regexp');\n\
 \n\
 /**\n\
  * BDD-style interface:\n\
@@ -2825,6 +1841,7 @@ module.exports = function(suite){\n\
 \n\
     context.describe = context.context = function(title, fn){\n\
       var suite = Suite.create(suites[0], title);\n\
+      suite.file = file;\n\
       suites.unshift(suite);\n\
       fn.call(suite);\n\
       suites.shift();\n\
@@ -2863,8 +1880,9 @@ module.exports = function(suite){\n\
 \n\
     context.it = context.specify = function(title, fn){\n\
       var suite = suites[0];\n\
-      if (suite.pending) var fn = null;\n\
+      if (suite.pending) fn = null;\n\
       var test = new Test(title, fn);\n\
+      test.file = file;\n\
       suite.addTest(test);\n\
       return test;\n\
     };\n\
@@ -2875,7 +1893,7 @@ module.exports = function(suite){\n\
 \n\
     context.it.only = function(title, fn){\n\
       var test = context.it(title, fn);\n\
-      var reString = '^' + utils.escapeRegexp(test.fullTitle()) + '$';\n\
+      var reString = '^' + escapeRe(test.fullTitle()) + '$';\n\
       mocha.grep(new RegExp(reString));\n\
       return test;\n\
     };\n\
@@ -2895,7 +1913,6 @@ module.exports = function(suite){\n\
 }); // module: interfaces/bdd.js\n\
 \n\
 require.register(\"interfaces/exports.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -2925,7 +1942,7 @@ module.exports = function(suite){\n\
 \n\
   suite.on('require', visit);\n\
 \n\
-  function visit(obj) {\n\
+  function visit(obj, file) {\n\
     var suite;\n\
     for (var key in obj) {\n\
       if ('function' == typeof obj[key]) {\n\
@@ -2944,10 +1961,12 @@ module.exports = function(suite){\n\
             suites[0].afterEach(fn);\n\
             break;\n\
           default:\n\
-            suites[0].addTest(new Test(key, fn));\n\
+            var test = new Test(key, fn);\n\
+            test.file = file;\n\
+            suites[0].addTest(test);\n\
         }\n\
       } else {\n\
-        var suite = Suite.create(suites[0], key);\n\
+        suite = Suite.create(suites[0], key);\n\
         suites.unshift(suite);\n\
         visit(obj[key]);\n\
         suites.shift();\n\
@@ -2959,7 +1978,6 @@ module.exports = function(suite){\n\
 }); // module: interfaces/exports.js\n\
 \n\
 require.register(\"interfaces/index.js\", function(module, exports, require){\n\
-\n\
 exports.bdd = require('./bdd');\n\
 exports.tdd = require('./tdd');\n\
 exports.qunit = require('./qunit');\n\
@@ -2968,13 +1986,13 @@ exports.exports = require('./exports');\n\
 }); // module: interfaces/index.js\n\
 \n\
 require.register(\"interfaces/qunit.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
 \n\
 var Suite = require('../suite')\n\
   , Test = require('../test')\n\
+  , escapeRe = require('browser/escape-string-regexp')\n\
   , utils = require('../utils');\n\
 \n\
 /**\n\
@@ -3046,6 +2064,7 @@ module.exports = function(suite){\n\
     context.suite = function(title){\n\
       if (suites.length > 1) suites.shift();\n\
       var suite = Suite.create(suites[0], title);\n\
+      suite.file = file;\n\
       suites.unshift(suite);\n\
       return suite;\n\
     };\n\
@@ -3067,6 +2086,7 @@ module.exports = function(suite){\n\
 \n\
     context.test = function(title, fn){\n\
       var test = new Test(title, fn);\n\
+      test.file = file;\n\
       suites[0].addTest(test);\n\
       return test;\n\
     };\n\
@@ -3077,7 +2097,7 @@ module.exports = function(suite){\n\
 \n\
     context.test.only = function(title, fn){\n\
       var test = context.test(title, fn);\n\
-      var reString = '^' + utils.escapeRegexp(test.fullTitle()) + '$';\n\
+      var reString = '^' + escapeRe(test.fullTitle()) + '$';\n\
       mocha.grep(new RegExp(reString));\n\
     };\n\
 \n\
@@ -3094,14 +2114,14 @@ module.exports = function(suite){\n\
 }); // module: interfaces/qunit.js\n\
 \n\
 require.register(\"interfaces/tdd.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
 \n\
 var Suite = require('../suite')\n\
   , Test = require('../test')\n\
-  , utils = require('../utils');;\n\
+  , escapeRe = require('browser/escape-string-regexp')\n\
+  , utils = require('../utils');\n\
 \n\
 /**\n\
  * TDD-style interface:\n\
@@ -3173,6 +2193,7 @@ module.exports = function(suite){\n\
 \n\
     context.suite = function(title, fn){\n\
       var suite = Suite.create(suites[0], title);\n\
+      suite.file = file;\n\
       suites.unshift(suite);\n\
       fn.call(suite);\n\
       suites.shift();\n\
@@ -3207,8 +2228,9 @@ module.exports = function(suite){\n\
 \n\
     context.test = function(title, fn){\n\
       var suite = suites[0];\n\
-      if (suite.pending) var fn = null;\n\
+      if (suite.pending) fn = null;\n\
       var test = new Test(title, fn);\n\
+      test.file = file;\n\
       suite.addTest(test);\n\
       return test;\n\
     };\n\
@@ -3219,7 +2241,7 @@ module.exports = function(suite){\n\
 \n\
     context.test.only = function(title, fn){\n\
       var test = context.test(title, fn);\n\
-      var reString = '^' + utils.escapeRegexp(test.fullTitle()) + '$';\n\
+      var reString = '^' + escapeRe(test.fullTitle()) + '$';\n\
       mocha.grep(new RegExp(reString));\n\
     };\n\
 \n\
@@ -3247,6 +2269,7 @@ require.register(\"mocha.js\", function(module, exports, require){\n\
  */\n\
 \n\
 var path = require('browser/path')\n\
+  , escapeRe = require('browser/escape-string-regexp')\n\
   , utils = require('./utils');\n\
 \n\
 /**\n\
@@ -3254,6 +2277,16 @@ var path = require('browser/path')\n\
  */\n\
 \n\
 exports = module.exports = Mocha;\n\
+\n\
+/**\n\
+ * To require local UIs and reporters when running in node.\n\
+ */\n\
+\n\
+if (typeof process !== 'undefined' && typeof process.cwd === 'function') {\n\
+  var join = path.join\n\
+    , cwd = process.cwd();\n\
+  module.paths.push(cwd, join(cwd, 'node_modules'));\n\
+}\n\
 \n\
 /**\n\
  * Expose internals.\n\
@@ -3287,7 +2320,7 @@ function image(name) {\n\
  * Options:\n\
  *\n\
  *   - `ui` name \"bdd\", \"tdd\", \"exports\" etc\n\
- *   - `reporter` reporter instance, defaults to `mocha.reporters.Dot`\n\
+ *   - `reporter` reporter instance, defaults to `mocha.reporters.spec`\n\
  *   - `globals` array of accepted globals\n\
  *   - `timeout` timeout in milliseconds\n\
  *   - `bail` bail on the first test failure\n\
@@ -3307,9 +2340,10 @@ function Mocha(options) {\n\
   this.suite = new exports.Suite('', new exports.Context);\n\
   this.ui(options.ui);\n\
   this.bail(options.bail);\n\
-  this.reporter(options.reporter);\n\
+  this.reporter(options.reporter, options.reporterOptions);\n\
   if (null != options.timeout) this.timeout(options.timeout);\n\
   this.useColors(options.useColors)\n\
+  if (options.enableTimeouts !== null) this.enableTimeouts(options.enableTimeouts);\n\
   if (options.slow) this.slow(options.slow);\n\
 \n\
   this.suite.on('pre-require', function (context) {\n\
@@ -3354,17 +2388,17 @@ Mocha.prototype.addFile = function(file){\n\
 };\n\
 \n\
 /**\n\
- * Set reporter to `reporter`, defaults to \"dot\".\n\
+ * Set reporter to `reporter`, defaults to \"spec\".\n\
  *\n\
  * @param {String|Function} reporter name or constructor\n\
+ * @param {Object} reporterOptions optional options\n\
  * @api public\n\
  */\n\
-\n\
-Mocha.prototype.reporter = function(reporter){\n\
+Mocha.prototype.reporter = function(reporter, reporterOptions){\n\
   if ('function' == typeof reporter) {\n\
     this._reporter = reporter;\n\
   } else {\n\
-    reporter = reporter || 'dot';\n\
+    reporter = reporter || 'spec';\n\
     var _reporter;\n\
     try { _reporter = require('./reporters/' + reporter); } catch (err) {};\n\
     if (!_reporter) try { _reporter = require(reporter); } catch (err) {};\n\
@@ -3375,6 +2409,7 @@ Mocha.prototype.reporter = function(reporter){\n\
     if (!_reporter) throw new Error('invalid reporter \"' + reporter + '\"');\n\
     this._reporter = _reporter;\n\
   }\n\
+  this.options.reporterOptions = reporterOptions;\n\
   return this;\n\
 };\n\
 \n\
@@ -3447,7 +2482,7 @@ Mocha.prototype._growl = function(runner, reporter) {\n\
 \n\
 Mocha.prototype.grep = function(re){\n\
   this.options.grep = 'string' == typeof re\n\
-    ? new RegExp(utils.escapeRegexp(re))\n\
+    ? new RegExp(escapeRe(re))\n\
     : re;\n\
   return this;\n\
 };\n\
@@ -3523,9 +2558,9 @@ Mocha.prototype.globals = function(globals){\n\
  */\n\
 \n\
 Mocha.prototype.useColors = function(colors){\n\
-  this.options.useColors = arguments.length && colors != undefined\n\
-    ? colors\n\
-    : true;\n\
+  if (colors !== undefined) {\n\
+    this.options.useColors = colors;\n\
+  }\n\
   return this;\n\
 };\n\
 \n\
@@ -3571,6 +2606,21 @@ Mocha.prototype.slow = function(slow){\n\
 };\n\
 \n\
 /**\n\
+ * Enable timeouts.\n\
+ *\n\
+ * @param {Boolean} enabled\n\
+ * @return {Mocha}\n\
+ * @api public\n\
+ */\n\
+\n\
+Mocha.prototype.enableTimeouts = function(enabled) {\n\
+  this.suite.enableTimeouts(arguments.length && enabled !== undefined\n\
+    ? enabled\n\
+    : true);\n\
+  return this\n\
+};\n\
+\n\
+/**\n\
  * Makes all tests async (accepting a callback)\n\
  *\n\
  * @return {Mocha}\n\
@@ -3579,6 +2629,16 @@ Mocha.prototype.slow = function(slow){\n\
 \n\
 Mocha.prototype.asyncOnly = function(){\n\
   this.options.asyncOnly = true;\n\
+  return this;\n\
+};\n\
+\n\
+/**\n\
+ * Disable syntax highlighting (in browser).\n\
+ * @returns {Mocha}\n\
+ * @api public\n\
+ */\n\
+Mocha.prototype.noHighlighting = function() {\n\
+  this.options.noHighlighting = true;\n\
   return this;\n\
 };\n\
 \n\
@@ -3602,9 +2662,20 @@ Mocha.prototype.run = function(fn){\n\
   if (options.grep) runner.grep(options.grep, options.invert);\n\
   if (options.globals) runner.globals(options.globals);\n\
   if (options.growl) this._growl(runner, reporter);\n\
-  exports.reporters.Base.useColors = options.useColors;\n\
+  if (options.useColors !== undefined) {\n\
+    exports.reporters.Base.useColors = options.useColors;\n\
+  }\n\
   exports.reporters.Base.inlineDiffs = options.useInlineDiffs;\n\
-  return runner.run(fn);\n\
+\n\
+  function done(failures) {\n\
+      if (reporter.done) {\n\
+          reporter.done(failures, fn);\n\
+      } else {\n\
+          fn(failures);\n\
+      }\n\
+  }\n\
+\n\
+  return runner.run(done);\n\
 };\n\
 \n\
 }); // module: mocha.js\n\
@@ -3636,7 +2707,7 @@ var y = d * 365.25;\n\
 module.exports = function(val, options){\n\
   options = options || {};\n\
   if ('string' == typeof val) return parse(val);\n\
-  return options.long ? longFormat(val) : shortFormat(val);\n\
+  return options['long'] ? longFormat(val) : shortFormat(val);\n\
 };\n\
 \n\
 /**\n\
@@ -3723,7 +2794,6 @@ function plural(ms, n, name) {\n\
 }); // module: ms.js\n\
 \n\
 require.register(\"reporters/base.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -3823,7 +2893,7 @@ if ('win32' == process.platform) {\n\
  */\n\
 \n\
 var color = exports.color = function(type, str) {\n\
-  if (!exports.useColors) return str;\n\
+  if (!exports.useColors) return String(str);\n\
   return '\\u001b[' + exports.colors[type] + 'm' + str + '\\u001b[0m';\n\
 };\n\
 \n\
@@ -3880,7 +2950,7 @@ exports.cursor = {\n\
  */\n\
 \n\
 exports.list = function(failures){\n\
-  console.error();\n\
+  console.log();\n\
   failures.forEach(function(test, i){\n\
     // format\n\
     var fmt = color('error title', '  %s) %s:\\n\
@@ -3907,13 +2977,13 @@ exports.list = function(failures){\n\
 \n\
     // explicitly show diff\n\
     if (err.showDiff && sameType(actual, expected)) {\n\
-      escape = false;\n\
-      err.actual = actual = stringify(canonicalize(actual));\n\
-      err.expected = expected = stringify(canonicalize(expected));\n\
-    }\n\
 \n\
-    // actual / expected diff\n\
-    if ('string' == typeof actual && 'string' == typeof expected) {\n\
+      if ('string' !== typeof actual) {\n\
+        escape = false;\n\
+        err.actual = actual = utils.stringify(actual);\n\
+        err.expected = expected = utils.stringify(expected);\n\
+      }\n\
+\n\
       fmt = color('error title', '  %s) %s:\\n\
 %s') + color('error stack', '\\n\
 %s\\n\
@@ -3933,7 +3003,7 @@ exports.list = function(failures){\n\
     stack = stack.slice(index ? index + 1 : index)\n\
       .replace(/^/gm, '  ');\n\
 \n\
-    console.error(fmt, (i + 1), test.fullTitle(), msg, stack);\n\
+    console.log(fmt, (i + 1), test.fullTitle(), msg, stack);\n\
   });\n\
 };\n\
 \n\
@@ -4038,11 +3108,10 @@ Base.prototype.epilogue = function(){\n\
   if (stats.failures) {\n\
     fmt = color('fail', '  %d failing');\n\
 \n\
-    console.error(fmt,\n\
-      stats.failures);\n\
+    console.log(fmt, stats.failures);\n\
 \n\
     Base.list(this.failures);\n\
-    console.error();\n\
+    console.log();\n\
   }\n\
 \n\
   console.log();\n\
@@ -4191,53 +3260,6 @@ function colorLines(name, str) {\n\
 }\n\
 \n\
 /**\n\
- * Stringify `obj`.\n\
- *\n\
- * @param {Object} obj\n\
- * @return {String}\n\
- * @api private\n\
- */\n\
-\n\
-function stringify(obj) {\n\
-  if (obj instanceof RegExp) return obj.toString();\n\
-  return JSON.stringify(obj, null, 2);\n\
-}\n\
-\n\
-/**\n\
- * Return a new object that has the keys in sorted order.\n\
- * @param {Object} obj\n\
- * @return {Object}\n\
- * @api private\n\
- */\n\
-\n\
- function canonicalize(obj, stack) {\n\
-   stack = stack || [];\n\
-\n\
-   if (utils.indexOf(stack, obj) !== -1) return obj;\n\
-\n\
-   var canonicalizedObj;\n\
-\n\
-   if ('[object Array]' == {}.toString.call(obj)) {\n\
-     stack.push(obj);\n\
-     canonicalizedObj = utils.map(obj, function(item) {\n\
-       return canonicalize(item, stack);\n\
-     });\n\
-     stack.pop();\n\
-   } else if (typeof obj === 'object' && obj !== null) {\n\
-     stack.push(obj);\n\
-     canonicalizedObj = {};\n\
-     utils.forEach(utils.keys(obj).sort(), function(key) {\n\
-       canonicalizedObj[key] = canonicalize(obj[key], stack);\n\
-     });\n\
-     stack.pop();\n\
-   } else {\n\
-     canonicalizedObj = obj;\n\
-   }\n\
-\n\
-   return canonicalizedObj;\n\
- }\n\
-\n\
-/**\n\
  * Check that a / b have the same type.\n\
  *\n\
  * @param {Object} a\n\
@@ -4252,11 +3274,9 @@ function sameType(a, b) {\n\
   return a == b;\n\
 }\n\
 \n\
-\n\
 }); // module: reporters/base.js\n\
 \n\
 require.register(\"reporters/doc.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4311,12 +3331,18 @@ function Doc(runner) {\n\
     var code = utils.escape(utils.clean(test.fn.toString()));\n\
     console.log('%s  <dd><pre><code>%s</code></pre></dd>', indent(), code);\n\
   });\n\
+\n\
+  runner.on('fail', function(test, err){\n\
+    console.log('%s  <dt class=\"error\">%s</dt>', indent(), utils.escape(test.title));\n\
+    var code = utils.escape(utils.clean(test.fn.toString()));\n\
+    console.log('%s  <dd class=\"error\"><pre><code>%s</code></pre></dd>', indent(), code);\n\
+    console.log('%s  <dd class=\"error\">%s</dd>', indent(), utils.escape(err));\n\
+  });\n\
 }\n\
 \n\
 }); // module: reporters/doc.js\n\
 \n\
 require.register(\"reporters/dot.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4343,7 +3369,7 @@ function Dot(runner) {\n\
   var self = this\n\
     , stats = this.stats\n\
     , width = Base.window.width * .75 | 0\n\
-    , n = 0;\n\
+    , n = -1;\n\
 \n\
   runner.on('start', function(){\n\
     process.stdout.write('\\n\
@@ -4351,6 +3377,8 @@ function Dot(runner) {\n\
   });\n\
 \n\
   runner.on('pending', function(test){\n\
+    if (++n % width == 0) process.stdout.write('\\n\
+  ');\n\
     process.stdout.write(color('pending', Base.symbols.dot));\n\
   });\n\
 \n\
@@ -4385,10 +3413,10 @@ F.prototype = Base.prototype;\n\
 Dot.prototype = new F;\n\
 Dot.prototype.constructor = Dot;\n\
 \n\
+\n\
 }); // module: reporters/dot.js\n\
 \n\
 require.register(\"reporters/html-cov.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4439,10 +3467,10 @@ function coverageClass(n) {\n\
   if (n >= 25) return 'low';\n\
   return 'terrible';\n\
 }\n\
+\n\
 }); // module: reporters/html-cov.js\n\
 \n\
 require.register(\"reporters/html.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4580,7 +3608,7 @@ function HTML(runner) {\n\
     } else if (test.pending) {\n\
       var el = fragment('<li class=\"test pass pending\"><h2>%e</h2></li>', test.title);\n\
     } else {\n\
-      var el = fragment('<li class=\"test fail\"><h2>%e <a href=\"?grep=%e\" class=\"replay\">‣</a></h2></li>', test.title, encodeURIComponent(test.fullTitle()));\n\
+      var el = fragment('<li class=\"test fail\"><h2>%e <a href=\"%e\" class=\"replay\">‣</a></h2></li>', test.title, self.testURL(test));\n\
       var str = test.err.stack || test.err.toString();\n\
 \n\
       // FF / Opera do not add the message\n\
@@ -4624,13 +3652,22 @@ function HTML(runner) {\n\
 }\n\
 \n\
 /**\n\
+ * Makes a URL, preserving querystring (\"search\") parameters.\n\
+ * @param {string} s\n\
+ * @returns {string} your new URL\n\
+ */\n\
+var makeUrl = function makeUrl(s) {\n\
+  var search = window.location.search;\n\
+  return window.location.pathname + (search ? search + '&' : '?' ) + 'grep=' + encodeURIComponent(s);\n\
+};\n\
+\n\
+/**\n\
  * Provide suite URL\n\
  *\n\
  * @param {Object} [suite]\n\
  */\n\
-\n\
 HTML.prototype.suiteURL = function(suite){\n\
-  return '?grep=' + encodeURIComponent(suite.fullTitle());\n\
+  return makeUrl(suite.fullTitle());\n\
 };\n\
 \n\
 /**\n\
@@ -4640,7 +3677,7 @@ HTML.prototype.suiteURL = function(suite){\n\
  */\n\
 \n\
 HTML.prototype.testURL = function(test){\n\
-  return '?grep=' + encodeURIComponent(test.fullTitle());\n\
+  return makeUrl(test.fullTitle());\n\
 };\n\
 \n\
 /**\n\
@@ -4721,7 +3758,6 @@ function on(el, event, fn) {\n\
 }); // module: reporters/html.js\n\
 \n\
 require.register(\"reporters/index.js\", function(module, exports, require){\n\
-\n\
 exports.Base = require('./base');\n\
 exports.Dot = require('./dot');\n\
 exports.Doc = require('./doc');\n\
@@ -4743,7 +3779,6 @@ exports.JSONStream = require('./json-stream');\n\
 }); // module: reporters/index.js\n\
 \n\
 require.register(\"reporters/json-cov.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4834,7 +3869,7 @@ function map(cov) {\n\
   }\n\
 \n\
   return ret;\n\
-};\n\
+}\n\
 \n\
 /**\n\
  * Map jscoverage data for a single source file\n\
@@ -4900,7 +3935,6 @@ function clean(test) {\n\
 }); // module: reporters/json-cov.js\n\
 \n\
 require.register(\"reporters/json-stream.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4937,7 +3971,9 @@ function List(runner) {\n\
   });\n\
 \n\
   runner.on('fail', function(test, err){\n\
-    console.log(JSON.stringify(['fail', clean(test)]));\n\
+    test = clean(test);\n\
+    test.err = err.message;\n\
+    console.log(JSON.stringify(['fail', test]));\n\
   });\n\
 \n\
   runner.on('end', function(){\n\
@@ -4961,10 +3997,10 @@ function clean(test) {\n\
     , duration: test.duration\n\
   }\n\
 }\n\
+\n\
 }); // module: reporters/json-stream.js\n\
 \n\
 require.register(\"reporters/json.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -4991,6 +4027,7 @@ function JSONReporter(runner) {\n\
   Base.call(this, runner);\n\
 \n\
   var tests = []\n\
+    , pending = []\n\
     , failures = []\n\
     , passes = [];\n\
 \n\
@@ -5006,13 +4043,20 @@ function JSONReporter(runner) {\n\
     failures.push(test);\n\
   });\n\
 \n\
+  runner.on('pending', function(test){\n\
+    pending.push(test);\n\
+  });\n\
+\n\
   runner.on('end', function(){\n\
     var obj = {\n\
-        stats: self.stats\n\
-      , tests: tests.map(clean)\n\
-      , failures: failures.map(clean)\n\
-      , passes: passes.map(clean)\n\
+      stats: self.stats,\n\
+      tests: tests.map(clean),\n\
+      pending: pending.map(clean),\n\
+      failures: failures.map(clean),\n\
+      passes: passes.map(clean)\n\
     };\n\
+\n\
+    runner.testResults = obj;\n\
 \n\
     process.stdout.write(JSON.stringify(obj, null, 2));\n\
   });\n\
@@ -5029,15 +4073,30 @@ function JSONReporter(runner) {\n\
 \n\
 function clean(test) {\n\
   return {\n\
-      title: test.title\n\
-    , fullTitle: test.fullTitle()\n\
-    , duration: test.duration\n\
+    title: test.title,\n\
+    fullTitle: test.fullTitle(),\n\
+    duration: test.duration,\n\
+    err: errorJSON(test.err || {})\n\
   }\n\
 }\n\
+\n\
+/**\n\
+ * Transform `error` into a JSON object.\n\
+ * @param {Error} err\n\
+ * @return {Object}\n\
+ */\n\
+\n\
+function errorJSON(err) {\n\
+  var res = {};\n\
+  Object.getOwnPropertyNames(err).forEach(function(key) {\n\
+    res[key] = err[key];\n\
+  }, err);\n\
+  return res;\n\
+}\n\
+\n\
 }); // module: reporters/json.js\n\
 \n\
 require.register(\"reporters/landing.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5096,6 +4155,8 @@ function Landing(runner) {\n\
 \n\
   runner.on('start', function(){\n\
     stream.write('\\n\
+\\n\
+\\n\
   ');\n\
     cursor.hide();\n\
   });\n\
@@ -5113,9 +4174,7 @@ function Landing(runner) {\n\
     }\n\
 \n\
     // render landing strip\n\
-    stream.write('\\u001b[4F\\n\
-\\n\
-');\n\
+    stream.write('\\u001b['+(width+1)+'D\\u001b[2A');\n\
     stream.write(runway());\n\
     stream.write('\\n\
   ');\n\
@@ -5143,10 +4202,10 @@ F.prototype = Base.prototype;\n\
 Landing.prototype = new F;\n\
 Landing.prototype.constructor = Landing;\n\
 \n\
+\n\
 }); // module: reporters/landing.js\n\
 \n\
 require.register(\"reporters/list.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5226,6 +4285,12 @@ var Base = require('./base')\n\
   , utils = require('../utils');\n\
 \n\
 /**\n\
+ * Constants\n\
+ */\n\
+\n\
+var SUITE_PREFIX = '$';\n\
+\n\
+/**\n\
  * Expose `Markdown`.\n\
  */\n\
 \n\
@@ -5255,8 +4320,9 @@ function Markdown(runner) {\n\
   }\n\
 \n\
   function mapTOC(suite, obj) {\n\
-    var ret = obj;\n\
-    obj = obj[suite.title] = obj[suite.title] || { suite: suite };\n\
+    var ret = obj,\n\
+        key = SUITE_PREFIX + suite.title;\n\
+    obj = obj[key] = obj[key] || { suite: suite };\n\
     suite.suites.forEach(function(suite){\n\
       mapTOC(suite, obj);\n\
     });\n\
@@ -5269,12 +4335,14 @@ function Markdown(runner) {\n\
     var link;\n\
     for (var key in obj) {\n\
       if ('suite' == key) continue;\n\
-      if (key) link = ' - [' + key + '](#' + utils.slug(obj[key].suite.fullTitle()) + ')\\n\
+      if (key !== SUITE_PREFIX) {\n\
+        link = ' - [' + key.substring(1) + ']';\n\
+        link += '(#' + utils.slug(obj[key].suite.fullTitle()) + ')\\n\
 ';\n\
-      if (key) buf += Array(level).join('  ') + link;\n\
+        buf += Array(level).join('  ') + link;\n\
+      }\n\
       buf += stringifyTOC(obj[key], level);\n\
     }\n\
-    --level;\n\
     return buf;\n\
   }\n\
 \n\
@@ -5319,10 +4387,10 @@ function Markdown(runner) {\n\
     process.stdout.write(buf);\n\
   });\n\
 }\n\
+\n\
 }); // module: reporters/markdown.js\n\
 \n\
 require.register(\"reporters/min.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5372,8 +4440,7 @@ require.register(\"reporters/nyan.js\", function(module, exports, require){\n\
  * Module dependencies.\n\
  */\n\
 \n\
-var Base = require('./base')\n\
-  , color = Base.color;\n\
+var Base = require('./base');\n\
 \n\
 /**\n\
  * Expose `Dot`.\n\
@@ -5451,18 +4518,17 @@ NyanCat.prototype.draw = function(){\n\
 \n\
 NyanCat.prototype.drawScoreboard = function(){\n\
   var stats = this.stats;\n\
-  var colors = Base.colors;\n\
 \n\
-  function draw(color, n) {\n\
+  function draw(type, n) {\n\
     write(' ');\n\
-    write('\\u001b[' + color + 'm' + n + '\\u001b[0m');\n\
+    write(Base.color(type, n));\n\
     write('\\n\
 ');\n\
   }\n\
 \n\
-  draw(colors.green, stats.passes);\n\
-  draw(colors.fail, stats.failures);\n\
-  draw(colors.pending, stats.pending);\n\
+  draw('green', stats.passes);\n\
+  draw('fail', stats.failures);\n\
+  draw('pending', stats.pending);\n\
   write('\\n\
 ');\n\
 \n\
@@ -5514,21 +4580,21 @@ NyanCat.prototype.drawRainbow = function(){\n\
 NyanCat.prototype.drawNyanCat = function() {\n\
   var self = this;\n\
   var startWidth = this.scoreboardWidth + this.trajectories[0].length;\n\
-  var color = '\\u001b[' + startWidth + 'C';\n\
+  var dist = '\\u001b[' + startWidth + 'C';\n\
   var padding = '';\n\
 \n\
-  write(color);\n\
+  write(dist);\n\
   write('_,------,');\n\
   write('\\n\
 ');\n\
 \n\
-  write(color);\n\
+  write(dist);\n\
   padding = self.tick ? '  ' : '   ';\n\
   write('_|' + padding + '/\\\\_/\\\\ ');\n\
   write('\\n\
 ');\n\
 \n\
-  write(color);\n\
+  write(dist);\n\
   padding = self.tick ? '_' : '__';\n\
   var tail = self.tick ? '~' : '^';\n\
   var face;\n\
@@ -5536,7 +4602,7 @@ NyanCat.prototype.drawNyanCat = function() {\n\
   write('\\n\
 ');\n\
 \n\
-  write(color);\n\
+  write(dist);\n\
   padding = self.tick ? ' ' : '  ';\n\
   write(padding + '\"\"  \"\" ');\n\
   write('\\n\
@@ -5563,7 +4629,7 @@ NyanCat.prototype.face = function() {\n\
   } else {\n\
     return '( - .-)';\n\
   }\n\
-}\n\
+};\n\
 \n\
 /**\n\
  * Move cursor up `n`.\n\
@@ -5618,6 +4684,8 @@ NyanCat.prototype.generateColors = function(){\n\
  */\n\
 \n\
 NyanCat.prototype.rainbowify = function(str){\n\
+  if (!Base.useColors)\n\
+    return str;\n\
   var color = this.rainbowColors[this.colorIndex % this.rainbowColors.length];\n\
   this.colorIndex += 1;\n\
   return '\\u001b[38;5;' + color + 'm' + str + '\\u001b[0m';\n\
@@ -5644,7 +4712,6 @@ NyanCat.prototype.constructor = NyanCat;\n\
 }); // module: reporters/nyan.js\n\
 \n\
 require.register(\"reporters/progress.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5682,7 +4749,8 @@ function Progress(runner, options) {\n\
     , width = Base.window.width * .50 | 0\n\
     , total = runner.total\n\
     , complete = 0\n\
-    , max = Math.max;\n\
+    , max = Math.max\n\
+    , lastN = -1;\n\
 \n\
   // default chars\n\
   options.open = options.open || '[';\n\
@@ -5704,6 +4772,12 @@ function Progress(runner, options) {\n\
       , percent = complete / total\n\
       , n = width * percent | 0\n\
       , i = width - n;\n\
+\n\
+    if (lastN === n && !options.verbose) {\n\
+      // Don't re-render the line if it hasn't changed\n\
+      return;\n\
+    }\n\
+    lastN = n;\n\
 \n\
     cursor.CR();\n\
     process.stdout.write('\\u001b[J');\n\
@@ -5738,7 +4812,6 @@ Progress.prototype.constructor = Progress;\n\
 }); // module: reporters/progress.js\n\
 \n\
 require.register(\"reporters/spec.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5829,7 +4902,6 @@ Spec.prototype.constructor = Spec;\n\
 }); // module: reporters/spec.js\n\
 \n\
 require.register(\"reporters/tap.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -5906,13 +4978,13 @@ function title(test) {\n\
 }); // module: reporters/tap.js\n\
 \n\
 require.register(\"reporters/xunit.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
 \n\
 var Base = require('./base')\n\
   , utils = require('../utils')\n\
+  , fs = require('browser/fs')\n\
   , escape = utils.escape;\n\
 \n\
 /**\n\
@@ -5938,11 +5010,18 @@ exports = module.exports = XUnit;\n\
  * @api public\n\
  */\n\
 \n\
-function XUnit(runner) {\n\
+function XUnit(runner, options) {\n\
   Base.call(this, runner);\n\
   var stats = this.stats\n\
     , tests = []\n\
     , self = this;\n\
+\n\
+  if (options.reporterOptions && options.reporterOptions.output) {\n\
+      if (! fs.createWriteStream) {\n\
+          throw new Error('file output not supported in browser');\n\
+      }\n\
+      self.fileStream = fs.createWriteStream(options.reporterOptions.output);\n\
+  }\n\
 \n\
   runner.on('pending', function(test){\n\
     tests.push(test);\n\
@@ -5957,7 +5036,7 @@ function XUnit(runner) {\n\
   });\n\
 \n\
   runner.on('end', function(){\n\
-    console.log(tag('testsuite', {\n\
+    self.write(tag('testsuite', {\n\
         name: 'Mocha Tests'\n\
       , tests: stats.tests\n\
       , failures: stats.failures\n\
@@ -5967,10 +5046,23 @@ function XUnit(runner) {\n\
       , time: (stats.duration / 1000) || 0\n\
     }, false));\n\
 \n\
-    tests.forEach(test);\n\
-    console.log('</testsuite>');\n\
+    tests.forEach(function(t) { self.test(t); });\n\
+    self.write('</testsuite>');\n\
   });\n\
 }\n\
+\n\
+/**\n\
+ * Override done to close the stream (if it's a file).\n\
+ */\n\
+XUnit.prototype.done = function(failures, fn) {\n\
+    if (this.fileStream) {\n\
+        this.fileStream.end(function() {\n\
+            fn(failures);\n\
+        });\n\
+    } else {\n\
+        fn(failures);\n\
+    }\n\
+};\n\
 \n\
 /**\n\
  * Inherit from `Base.prototype`.\n\
@@ -5983,10 +5075,22 @@ XUnit.prototype.constructor = XUnit;\n\
 \n\
 \n\
 /**\n\
+ * Write out the given line\n\
+ */\n\
+XUnit.prototype.write = function(line) {\n\
+    if (this.fileStream) {\n\
+        this.fileStream.write(line + '\\n\
+');\n\
+    } else {\n\
+        console.log(line);\n\
+    }\n\
+};\n\
+\n\
+/**\n\
  * Output tag for the given `test.`\n\
  */\n\
 \n\
-function test(test) {\n\
+XUnit.prototype.test = function(test, ostream) {\n\
   var attrs = {\n\
       classname: test.parent.fullTitle()\n\
     , name: test.title\n\
@@ -5995,14 +5099,14 @@ function test(test) {\n\
 \n\
   if ('failed' == test.state) {\n\
     var err = test.err;\n\
-    attrs.message = escape(err.message);\n\
-    console.log(tag('testcase', attrs, false, tag('failure', attrs, false, cdata(err.stack))));\n\
+    this.write(tag('testcase', attrs, false, tag('failure', {}, false, cdata(escape(err.message) + \"\\n\
+\" + err.stack))));\n\
   } else if (test.pending) {\n\
-    console.log(tag('testcase', attrs, false, tag('skipped', {}, true)));\n\
+    this.write(tag('testcase', attrs, false, tag('skipped', {}, true)));\n\
   } else {\n\
-    console.log(tag('testcase', attrs, true) );\n\
+    this.write(tag('testcase', attrs, true) );\n\
   }\n\
-}\n\
+};\n\
 \n\
 /**\n\
  * HTML tag helper.\n\
@@ -6033,14 +5137,14 @@ function cdata(str) {\n\
 }); // module: reporters/xunit.js\n\
 \n\
 require.register(\"runnable.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
 \n\
 var EventEmitter = require('browser/events').EventEmitter\n\
   , debug = require('browser/debug')('mocha:runnable')\n\
-  , milliseconds = require('./ms');\n\
+  , milliseconds = require('./ms')\n\
+  , utils = require('./utils');\n\
 \n\
 /**\n\
  * Save timer references to avoid Sinon interfering (see GH-237).\n\
@@ -6079,7 +5183,9 @@ function Runnable(title, fn) {\n\
   this.sync = ! this.async;\n\
   this._timeout = 2000;\n\
   this._slow = 75;\n\
+  this._enableTimeouts = true;\n\
   this.timedOut = false;\n\
+  this._trace = new Error('done() called multiple times')\n\
 }\n\
 \n\
 /**\n\
@@ -6102,6 +5208,7 @@ Runnable.prototype.constructor = Runnable;\n\
 \n\
 Runnable.prototype.timeout = function(ms){\n\
   if (0 == arguments.length) return this._timeout;\n\
+  if (ms === 0) this._enableTimeouts = false;\n\
   if ('string' == typeof ms) ms = milliseconds(ms);\n\
   debug('timeout %d', ms);\n\
   this._timeout = ms;\n\
@@ -6122,6 +5229,21 @@ Runnable.prototype.slow = function(ms){\n\
   if ('string' == typeof ms) ms = milliseconds(ms);\n\
   debug('timeout %d', ms);\n\
   this._slow = ms;\n\
+  return this;\n\
+};\n\
+\n\
+/**\n\
+ * Set and & get timeout `enabled`.\n\
+ *\n\
+ * @param {Boolean} enabled\n\
+ * @return {Runnable|Boolean} enabled or self\n\
+ * @api private\n\
+ */\n\
+\n\
+Runnable.prototype.enableTimeouts = function(enabled){\n\
+  if (arguments.length === 0) return this._enableTimeouts;\n\
+  debug('enableTimeouts %s', enabled);\n\
+  this._enableTimeouts = enabled;\n\
   return this;\n\
 };\n\
 \n\
@@ -6173,8 +5295,10 @@ Runnable.prototype.resetTimeout = function(){\n\
   var self = this;\n\
   var ms = this.timeout() || 1e9;\n\
 \n\
+  if (!this._enableTimeouts) return;\n\
   this.clearTimeout();\n\
   this.timer = setTimeout(function(){\n\
+    if (!self._enableTimeouts) return;\n\
     self.callback(new Error('timeout of ' + ms + 'ms exceeded'));\n\
     self.timedOut = true;\n\
   }, ms);\n\
@@ -6199,28 +5323,30 @@ Runnable.prototype.globals = function(arr){\n\
 \n\
 Runnable.prototype.run = function(fn){\n\
   var self = this\n\
-    , ms = this.timeout()\n\
     , start = new Date\n\
     , ctx = this.ctx\n\
     , finished\n\
     , emitted;\n\
 \n\
-  if (ctx) ctx.runnable(this);\n\
+  // Some times the ctx exists but it is not runnable\n\
+  if (ctx && ctx.runnable) ctx.runnable(this);\n\
 \n\
   // called multiple times\n\
   function multiple(err) {\n\
     if (emitted) return;\n\
     emitted = true;\n\
-    self.emit('error', err || new Error('done() called multiple times'));\n\
+    self.emit('error', err || new Error('done() called multiple times; stacktrace may be inaccurate'));\n\
   }\n\
 \n\
   // finished\n\
   function done(err) {\n\
+    var ms = self.timeout();\n\
     if (self.timedOut) return;\n\
-    if (finished) return multiple(err);\n\
+    if (finished) return multiple(err || self._trace);\n\
     self.clearTimeout();\n\
     self.duration = new Date - start;\n\
     finished = true;\n\
+    if (!err && self.duration > ms && self._enableTimeouts) err = new Error('timeout of ' + ms + 'ms exceeded');\n\
     fn(err);\n\
   }\n\
 \n\
@@ -6234,11 +5360,17 @@ Runnable.prototype.run = function(fn){\n\
     try {\n\
       this.fn.call(ctx, function(err){\n\
         if (err instanceof Error || toString.call(err) === \"[object Error]\") return done(err);\n\
-        if (null != err) return done(new Error('done() invoked with non-Error: ' + err));\n\
+        if (null != err) {\n\
+          if (Object.prototype.toString.call(err) === '[object Object]') {\n\
+            return done(new Error('done() invoked with non-Error: ' + JSON.stringify(err)));\n\
+          } else {\n\
+            return done(new Error('done() invoked with non-Error: ' + err));\n\
+          }\n\
+        }\n\
         done();\n\
       });\n\
     } catch (err) {\n\
-      done(err);\n\
+      done(utils.getError(err));\n\
     }\n\
     return;\n\
   }\n\
@@ -6255,14 +5387,20 @@ Runnable.prototype.run = function(fn){\n\
       callFn(this.fn);\n\
     }\n\
   } catch (err) {\n\
-    done(err);\n\
+    done(utils.getError(err));\n\
   }\n\
 \n\
   function callFn(fn) {\n\
     var result = fn.call(ctx);\n\
     if (result && typeof result.then === 'function') {\n\
       self.resetTimeout();\n\
-      result.then(function(){ done() }, done);\n\
+      result\n\
+        .then(function() {\n\
+          done()\n\
+        },\n\
+        function(reason) {\n\
+          done(reason || new Error('Promise rejected with no or falsy reason'))\n\
+        });\n\
     } else {\n\
       done();\n\
     }\n\
@@ -6293,7 +5431,9 @@ var globals = [\n\
   'setInterval',\n\
   'clearInterval',\n\
   'XMLHttpRequest',\n\
-  'Date'\n\
+  'Date',\n\
+  'setImmediate',\n\
+  'clearImmediate'\n\
 ];\n\
 \n\
 /**\n\
@@ -6439,7 +5579,6 @@ Runner.prototype.checkGlobals = function(test){\n\
   var ok = this._globals;\n\
 \n\
   var globals = this.globalProps();\n\
-  var isNode = process.kill;\n\
   var leaks;\n\
 \n\
   if (test) {\n\
@@ -6523,7 +5662,6 @@ Runner.prototype.hook = function(name, fn){\n\
   function next(i) {\n\
     var hook = hooks[i];\n\
     if (!hook) return fn();\n\
-    if (self.failures && suite.bail()) return fn();\n\
     self.currentRunnable = hook;\n\
 \n\
     hook.ctx.currentTest = self.test;\n\
@@ -6811,12 +5949,25 @@ Runner.prototype.runSuite = function(suite, fn){\n\
  */\n\
 \n\
 Runner.prototype.uncaught = function(err){\n\
-  debug('uncaught exception %s', err.message);\n\
-  var runnable = this.currentRunnable;\n\
-  if (!runnable || 'failed' == runnable.state) return;\n\
-  runnable.clearTimeout();\n\
+  if (err) {\n\
+    debug('uncaught exception %s', err !== function () {\n\
+      return this;\n\
+    }.call(err) ? err : ( err.message || err ));\n\
+  } else {\n\
+    debug('uncaught undefined exception');\n\
+    err = utils.undefinedError();\n\
+  }\n\
   err.uncaught = true;\n\
+\n\
+  var runnable = this.currentRunnable;\n\
+  if (!runnable) return;\n\
+\n\
+  var wasAlreadyDone = runnable.state;\n\
   this.fail(runnable, err);\n\
+\n\
+  runnable.clearTimeout();\n\
+\n\
+  if (wasAlreadyDone) return;\n\
 \n\
   // recover from test\n\
   if ('test' == runnable.type) {\n\
@@ -6839,8 +5990,8 @@ Runner.prototype.uncaught = function(err){\n\
  */\n\
 \n\
 Runner.prototype.run = function(fn){\n\
-  var self = this\n\
-    , fn = fn || function(){};\n\
+  var self = this;\n\
+  fn = fn || function(){};\n\
 \n\
   function uncaught(err){\n\
     self.uncaught(err);\n\
@@ -6877,7 +6028,7 @@ Runner.prototype.run = function(fn){\n\
 Runner.prototype.abort = function(){\n\
   debug('aborting');\n\
   this._abort = true;\n\
-}\n\
+};\n\
 \n\
 /**\n\
  * Filter leaks with the given globals flagged as `ok`.\n\
@@ -6941,7 +6092,6 @@ function filterLeaks(ok, globals) {\n\
 }); // module: runner.js\n\
 \n\
 require.register(\"suite.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -6989,9 +6139,11 @@ exports.create = function(parent, title){\n\
  * @api private\n\
  */\n\
 \n\
-function Suite(title, ctx) {\n\
+function Suite(title, parentContext) {\n\
   this.title = title;\n\
-  this.ctx = ctx;\n\
+  var context = function() {};\n\
+  context.prototype = parentContext;\n\
+  this.ctx = new context();\n\
   this.suites = [];\n\
   this.tests = [];\n\
   this.pending = false;\n\
@@ -7001,6 +6153,7 @@ function Suite(title, ctx) {\n\
   this._afterAll = [];\n\
   this.root = !title;\n\
   this._timeout = 2000;\n\
+  this._enableTimeouts = true;\n\
   this._slow = 75;\n\
   this._bail = false;\n\
 }\n\
@@ -7027,6 +6180,7 @@ Suite.prototype.clone = function(){\n\
   debug('clone');\n\
   suite.ctx = this.ctx;\n\
   suite.timeout(this.timeout());\n\
+  suite.enableTimeouts(this.enableTimeouts());\n\
   suite.slow(this.slow());\n\
   suite.bail(this.bail());\n\
   return suite;\n\
@@ -7042,9 +6196,25 @@ Suite.prototype.clone = function(){\n\
 \n\
 Suite.prototype.timeout = function(ms){\n\
   if (0 == arguments.length) return this._timeout;\n\
+  if (ms.toString() === '0') this._enableTimeouts = false;\n\
   if ('string' == typeof ms) ms = milliseconds(ms);\n\
   debug('timeout %d', ms);\n\
   this._timeout = parseInt(ms, 10);\n\
+  return this;\n\
+};\n\
+\n\
+/**\n\
+  * Set timeout `enabled`.\n\
+  *\n\
+  * @param {Boolean} enabled\n\
+  * @return {Suite|Boolean} self or enabled\n\
+  * @api private\n\
+  */\n\
+\n\
+Suite.prototype.enableTimeouts = function(enabled){\n\
+  if (arguments.length === 0) return this._enableTimeouts;\n\
+  debug('enableTimeouts %s', enabled);\n\
+  this._enableTimeouts = enabled;\n\
   return this;\n\
 };\n\
 \n\
@@ -7067,7 +6237,7 @@ Suite.prototype.slow = function(ms){\n\
 /**\n\
  * Sets whether to bail after first error.\n\
  *\n\
- * @parma {Boolean} bail\n\
+ * @param {Boolean} bail\n\
  * @return {Suite|Number} for chaining\n\
  * @api private\n\
  */\n\
@@ -7098,6 +6268,7 @@ Suite.prototype.beforeAll = function(title, fn){\n\
   var hook = new Hook(title, fn);\n\
   hook.parent = this;\n\
   hook.timeout(this.timeout());\n\
+  hook.enableTimeouts(this.enableTimeouts());\n\
   hook.slow(this.slow());\n\
   hook.ctx = this.ctx;\n\
   this._beforeAll.push(hook);\n\
@@ -7124,6 +6295,7 @@ Suite.prototype.afterAll = function(title, fn){\n\
   var hook = new Hook(title, fn);\n\
   hook.parent = this;\n\
   hook.timeout(this.timeout());\n\
+  hook.enableTimeouts(this.enableTimeouts());\n\
   hook.slow(this.slow());\n\
   hook.ctx = this.ctx;\n\
   this._afterAll.push(hook);\n\
@@ -7150,6 +6322,7 @@ Suite.prototype.beforeEach = function(title, fn){\n\
   var hook = new Hook(title, fn);\n\
   hook.parent = this;\n\
   hook.timeout(this.timeout());\n\
+  hook.enableTimeouts(this.enableTimeouts());\n\
   hook.slow(this.slow());\n\
   hook.ctx = this.ctx;\n\
   this._beforeEach.push(hook);\n\
@@ -7176,6 +6349,7 @@ Suite.prototype.afterEach = function(title, fn){\n\
   var hook = new Hook(title, fn);\n\
   hook.parent = this;\n\
   hook.timeout(this.timeout());\n\
+  hook.enableTimeouts(this.enableTimeouts());\n\
   hook.slow(this.slow());\n\
   hook.ctx = this.ctx;\n\
   this._afterEach.push(hook);\n\
@@ -7194,6 +6368,7 @@ Suite.prototype.afterEach = function(title, fn){\n\
 Suite.prototype.addSuite = function(suite){\n\
   suite.parent = this;\n\
   suite.timeout(this.timeout());\n\
+  suite.enableTimeouts(this.enableTimeouts());\n\
   suite.slow(this.slow());\n\
   suite.bail(this.bail());\n\
   this.suites.push(suite);\n\
@@ -7212,6 +6387,7 @@ Suite.prototype.addSuite = function(suite){\n\
 Suite.prototype.addTest = function(test){\n\
   test.parent = this;\n\
   test.timeout(this.timeout());\n\
+  test.enableTimeouts(this.enableTimeouts());\n\
   test.slow(this.slow());\n\
   test.ctx = this.ctx;\n\
   this.tests.push(test);\n\
@@ -7269,7 +6445,6 @@ Suite.prototype.eachTest = function(fn){\n\
 }); // module: suite.js\n\
 \n\
 require.register(\"test.js\", function(module, exports, require){\n\
-\n\
 /**\n\
  * Module dependencies.\n\
  */\n\
@@ -7315,6 +6490,9 @@ require.register(\"utils.js\", function(module, exports, require){\n\
 \n\
 var fs = require('browser/fs')\n\
   , path = require('browser/path')\n\
+  , basename = path.basename\n\
+  , exists = fs.existsSync || path.existsSync\n\
+  , glob = require('browser/glob')\n\
   , join = path.join\n\
   , debug = require('browser/debug')('mocha:watch');\n\
 \n\
@@ -7480,16 +6658,19 @@ function ignored(path){\n\
  * @api private\n\
  */\n\
 \n\
-exports.files = function(dir, ret){\n\
+exports.files = function(dir, ext, ret){\n\
   ret = ret || [];\n\
+  ext = ext || ['js'];\n\
+\n\
+  var re = new RegExp('\\\\.(' + ext.join('|') + ')$');\n\
 \n\
   fs.readdirSync(dir)\n\
   .filter(ignored)\n\
   .forEach(function(path){\n\
     path = join(dir, path);\n\
     if (fs.statSync(path).isDirectory()) {\n\
-      exports.files(path, ret);\n\
-    } else if (path.match(/\\.(js|coffee|litcoffee|coffee.md)$/)) {\n\
+      exports.files(path, ext, ret);\n\
+    } else if (path.match(re)) {\n\
       ret.push(path);\n\
     }\n\
   });\n\
@@ -7523,7 +6704,7 @@ exports.clean = function(str) {\n\
 ?|[\\n\
 \\u2028\\u2029]/g, \"\\n\
 \").replace(/^\\uFEFF/, '')\n\
-    .replace(/^function *\\(.*\\) *{/, '')\n\
+    .replace(/^function *\\(.*\\) *{|\\(.*\\) *=> *{?/, '')\n\
     .replace(/\\s+\\}$/, '');\n\
 \n\
   var spaces = str.match(/^\\n\
@@ -7536,18 +6717,6 @@ exports.clean = function(str) {\n\
   str = str.replace(re, '');\n\
 \n\
   return exports.trim(str);\n\
-};\n\
-\n\
-/**\n\
- * Escape regular expression characters in `str`.\n\
- *\n\
- * @param {String} str\n\
- * @return {String}\n\
- * @api private\n\
- */\n\
-\n\
-exports.escapeRegexp = function(str){\n\
-  return str.replace(/[-\\\\^$*+?.()|[\\]{}]/g, \"\\\\$&\");\n\
 };\n\
 \n\
 /**\n\
@@ -7597,7 +6766,7 @@ function highlight(js) {\n\
     .replace(/('.*?')/gm, '<span class=\"string\">$1</span>')\n\
     .replace(/(\\d+\\.\\d+)/gm, '<span class=\"number\">$1</span>')\n\
     .replace(/(\\d+)/gm, '<span class=\"number\">$1</span>')\n\
-    .replace(/\\bnew *(\\w+)/gm, '<span class=\"keyword\">new</span> <span class=\"init\">$1</span>')\n\
+    .replace(/\\bnew[ \\t]+(\\w+)/gm, '<span class=\"keyword\">new</span> <span class=\"init\">$1</span>')\n\
     .replace(/\\b(function|new|throw|return|var|if|else)\\b/gm, '<span class=\"keyword\">$1</span>')\n\
 }\n\
 \n\
@@ -7609,15 +6778,271 @@ function highlight(js) {\n\
  */\n\
 \n\
 exports.highlightTags = function(name) {\n\
-  var code = document.getElementsByTagName(name);\n\
+  var code = document.getElementById('mocha').getElementsByTagName(name);\n\
   for (var i = 0, len = code.length; i < len; ++i) {\n\
     code[i].innerHTML = highlight(code[i].innerHTML);\n\
   }\n\
 };\n\
 \n\
+/**\n\
+ * If a value could have properties, and has none, this function is called, which returns\n\
+ * a string representation of the empty value.\n\
+ *\n\
+ * Functions w/ no properties return `'[Function]'`\n\
+ * Arrays w/ length === 0 return `'[]'`\n\
+ * Objects w/ no properties return `'{}'`\n\
+ * All else: return result of `value.toString()`\n\
+ *\n\
+ * @param {*} value Value to inspect\n\
+ * @param {string} [type] The type of the value, if known.\n\
+ * @returns {string}\n\
+ */\n\
+var emptyRepresentation = function emptyRepresentation(value, type) {\n\
+  type = type || exports.type(value);\n\
+\n\
+  switch(type) {\n\
+    case 'function':\n\
+      return '[Function]';\n\
+    case 'object':\n\
+      return '{}';\n\
+    case 'array':\n\
+      return '[]';\n\
+    default:\n\
+      return value.toString();\n\
+  }\n\
+};\n\
+\n\
+/**\n\
+ * Takes some variable and asks `{}.toString()` what it thinks it is.\n\
+ * @param {*} value Anything\n\
+ * @example\n\
+ * type({}) // 'object'\n\
+ * type([]) // 'array'\n\
+ * type(1) // 'number'\n\
+ * type(false) // 'boolean'\n\
+ * type(Infinity) // 'number'\n\
+ * type(null) // 'null'\n\
+ * type(new Date()) // 'date'\n\
+ * type(/foo/) // 'regexp'\n\
+ * type('type') // 'string'\n\
+ * type(global) // 'global'\n\
+ * @api private\n\
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/toString\n\
+ * @returns {string}\n\
+ */\n\
+exports.type = function type(value) {\n\
+  if (typeof Buffer !== 'undefined' && Buffer.isBuffer(value)) {\n\
+    return 'buffer';\n\
+  }\n\
+  return Object.prototype.toString.call(value)\n\
+    .replace(/^\\[.+\\s(.+?)\\]$/, '$1')\n\
+    .toLowerCase();\n\
+};\n\
+\n\
+/**\n\
+ * @summary Stringify `value`.\n\
+ * @description Different behavior depending on type of value.\n\
+ * - If `value` is undefined or null, return `'[undefined]'` or `'[null]'`, respectively.\n\
+ * - If `value` is not an object, function or array, return result of `value.toString()` wrapped in double-quotes.\n\
+ * - If `value` is an *empty* object, function, or array, return result of function\n\
+ *   {@link emptyRepresentation}.\n\
+ * - If `value` has properties, call {@link exports.canonicalize} on it, then return result of\n\
+ *   JSON.stringify().\n\
+ *\n\
+ * @see exports.type\n\
+ * @param {*} value\n\
+ * @return {string}\n\
+ * @api private\n\
+ */\n\
+\n\
+exports.stringify = function(value) {\n\
+  var prop,\n\
+    type = exports.type(value);\n\
+\n\
+  if (type === 'null' || type === 'undefined') {\n\
+    return '[' + type + ']';\n\
+  }\n\
+\n\
+  if (type === 'date') {\n\
+    return '[Date: ' + value.toISOString() + ']';\n\
+  }\n\
+\n\
+  if (!~exports.indexOf(['object', 'array', 'function'], type)) {\n\
+    return value.toString();\n\
+  }\n\
+\n\
+  for (prop in value) {\n\
+    if (Object.prototype.hasOwnProperty.call(value, prop)) {\n\
+      return JSON.stringify(exports.canonicalize(value), null, 2).replace(/,(\\n\
+|$)/g, '$1');\n\
+    }\n\
+  }\n\
+\n\
+  return emptyRepresentation(value, type);\n\
+};\n\
+\n\
+/**\n\
+ * Return if obj is a Buffer\n\
+ * @param {Object} arg\n\
+ * @return {Boolean}\n\
+ * @api private\n\
+ */\n\
+exports.isBuffer = function (arg) {\n\
+  return typeof Buffer !== 'undefined' && Buffer.isBuffer(arg);\n\
+};\n\
+\n\
+/**\n\
+ * @summary Return a new Thing that has the keys in sorted order.  Recursive.\n\
+ * @description If the Thing...\n\
+ * - has already been seen, return string `'[Circular]'`\n\
+ * - is `undefined`, return string `'[undefined]'`\n\
+ * - is `null`, return value `null`\n\
+ * - is some other primitive, return the value\n\
+ * - is not a primitive or an `Array`, `Object`, or `Function`, return the value of the Thing's `toString()` method\n\
+ * - is a non-empty `Array`, `Object`, or `Function`, return the result of calling this function again.\n\
+ * - is an empty `Array`, `Object`, or `Function`, return the result of calling `emptyRepresentation()`\n\
+ *\n\
+ * @param {*} value Thing to inspect.  May or may not have properties.\n\
+ * @param {Array} [stack=[]] Stack of seen values\n\
+ * @return {(Object|Array|Function|string|undefined)}\n\
+ * @see {@link exports.stringify}\n\
+ * @api private\n\
+ */\n\
+\n\
+exports.canonicalize = function(value, stack) {\n\
+  var canonicalizedObj,\n\
+    type = exports.type(value),\n\
+    prop,\n\
+    withStack = function withStack(value, fn) {\n\
+      stack.push(value);\n\
+      fn();\n\
+      stack.pop();\n\
+    };\n\
+\n\
+  stack = stack || [];\n\
+\n\
+  if (exports.indexOf(stack, value) !== -1) {\n\
+    return '[Circular]';\n\
+  }\n\
+\n\
+  switch(type) {\n\
+    case 'undefined':\n\
+      canonicalizedObj = '[undefined]';\n\
+      break;\n\
+    case 'buffer':\n\
+    case 'null':\n\
+      canonicalizedObj = value;\n\
+      break;\n\
+    case 'array':\n\
+      withStack(value, function () {\n\
+        canonicalizedObj = exports.map(value, function (item) {\n\
+          return exports.canonicalize(item, stack);\n\
+        });\n\
+      });\n\
+      break;\n\
+    case 'date':\n\
+      canonicalizedObj = '[Date: ' + value.toISOString() + ']';\n\
+      break;\n\
+    case 'function':\n\
+      for (prop in value) {\n\
+        canonicalizedObj = {};\n\
+        break;\n\
+      }\n\
+      if (!canonicalizedObj) {\n\
+        canonicalizedObj = emptyRepresentation(value, type);\n\
+        break;\n\
+      }\n\
+    /* falls through */\n\
+    case 'object':\n\
+      canonicalizedObj = canonicalizedObj || {};\n\
+      withStack(value, function () {\n\
+        exports.forEach(exports.keys(value).sort(), function (key) {\n\
+          canonicalizedObj[key] = exports.canonicalize(value[key], stack);\n\
+        });\n\
+      });\n\
+      break;\n\
+    case 'number':\n\
+    case 'boolean':\n\
+      canonicalizedObj = value;\n\
+      break;\n\
+    default:\n\
+      canonicalizedObj = value.toString();\n\
+  }\n\
+\n\
+  return canonicalizedObj;\n\
+};\n\
+\n\
+/**\n\
+ * Lookup file names at the given `path`.\n\
+ */\n\
+exports.lookupFiles = function lookupFiles(path, extensions, recursive) {\n\
+  var files = [];\n\
+  var re = new RegExp('\\\\.(' + extensions.join('|') + ')$');\n\
+\n\
+  if (!exists(path)) {\n\
+    if (exists(path + '.js')) {\n\
+      path += '.js';\n\
+    } else {\n\
+      files = glob.sync(path);\n\
+      if (!files.length) throw new Error(\"cannot resolve path (or pattern) '\" + path + \"'\");\n\
+      return files;\n\
+    }\n\
+  }\n\
+\n\
+  try {\n\
+    var stat = fs.statSync(path);\n\
+    if (stat.isFile()) return path;\n\
+  }\n\
+  catch (ignored) {\n\
+    return;\n\
+  }\n\
+\n\
+  fs.readdirSync(path).forEach(function(file){\n\
+    file = join(path, file);\n\
+    try {\n\
+      var stat = fs.statSync(file);\n\
+      if (stat.isDirectory()) {\n\
+        if (recursive) {\n\
+          files = files.concat(lookupFiles(file, extensions, recursive));\n\
+        }\n\
+        return;\n\
+      }\n\
+    }\n\
+    catch (ignored) {\n\
+      return;\n\
+    }\n\
+    if (!stat.isFile() || !re.test(file) || basename(file)[0] === '.') return;\n\
+    files.push(file);\n\
+  });\n\
+\n\
+  return files;\n\
+};\n\
+\n\
+/**\n\
+ * Generate an undefined error with a message warning the user.\n\
+ *\n\
+ * @return {Error}\n\
+ */\n\
+\n\
+exports.undefinedError = function(){\n\
+  return new Error('Caught undefined error, did you throw without specifying what?');\n\
+};\n\
+\n\
+/**\n\
+ * Generate an undefined error if `err` is not defined.\n\
+ *\n\
+ * @param {Error} err\n\
+ * @return {Error}\n\
+ */\n\
+\n\
+exports.getError = function(err){\n\
+  return err || exports.undefinedError();\n\
+};\n\
+\n\
+\n\
 }); // module: utils.js\n\
 // The global object is \"self\" in Web Workers.\n\
-global = (function() { return this; })();\n\
+var global = (function() { return this; })();\n\
 \n\
 /**\n\
  * Save timer references to avoid Sinon interfering (see GH-237).\n\
@@ -7644,13 +7069,20 @@ process.stdout = {};\n\
 \n\
 var uncaughtExceptionHandlers = [];\n\
 \n\
+var originalOnerrorHandler = global.onerror;\n\
+\n\
 /**\n\
  * Remove uncaughtException listener.\n\
+ * Revert to original onerror handler if previously defined.\n\
  */\n\
 \n\
 process.removeListener = function(e, fn){\n\
   if ('uncaughtException' == e) {\n\
-    global.onerror = function() {};\n\
+    if (originalOnerrorHandler) {\n\
+      global.onerror = originalOnerrorHandler;\n\
+    } else {\n\
+      global.onerror = function() {};\n\
+    }\n\
     var i = Mocha.utils.indexOf(uncaughtExceptionHandlers, fn);\n\
     if (i != -1) { uncaughtExceptionHandlers.splice(i, 1); }\n\
   }\n\
@@ -7750,15 +7182,16 @@ mocha.run = function(fn){\n\
   mocha.globals('location');\n\
 \n\
   var query = Mocha.utils.parseQuery(global.location.search || '');\n\
-  if (query.grep) mocha.grep(query.grep);\n\
+  if (query.grep) mocha.grep(new RegExp(query.grep));\n\
   if (query.invert) mocha.invert();\n\
 \n\
-  return Mocha.prototype.run.call(mocha, function(){\n\
+  return Mocha.prototype.run.call(mocha, function(err){\n\
     // The DOM Document is not available in Web Workers.\n\
-    if (global.document) {\n\
+    var document = global.document;\n\
+    if (document && document.getElementById('mocha') && options.noHighlighting !== true) {\n\
       Mocha.utils.highlightTags('code');\n\
     }\n\
-    if (fn) fn();\n\
+    if (fn) fn(err);\n\
   });\n\
 };\n\
 \n\
@@ -7767,7 +7200,8 @@ mocha.run = function(fn){\n\
  */\n\
 \n\
 Mocha.process = process;\n\
-})();//@ sourceURL=visionmedia-mocha/mocha.js"
+})();\n\
+//@ sourceURL=visionmedia-mocha/mocha.js"
 ));
 require.register("dominicbarnes-expect.js/index.js", Function("exports, require, module",
 "(function (global, module) {\n\
@@ -9412,17 +8846,10 @@ Dialog.prototype.remove = function(){\n\
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+require.register("component-overlay/template.html", Function("exports, require, module",
+"module.exports = '<div class=\"overlay hidden\"></div>\\n\
+';//@ sourceURL=component-overlay/template.html"
+));
 
 
 
@@ -9430,7 +8857,7 @@ Dialog.prototype.remove = function(){\n\
 
 
 require.register("dialog/template.html", Function("exports, require, module",
-"module.exports = '<div id=\"dialog\" class=\"hide\">\\n\
+"module.exports = '<div class=\"dialog hide\">\\n\
   <div class=\"content\">\\n\
     <span class=\"title\">Title</span>\\n\
     <a href=\"#\" class=\"close\">&times;<em>close</em></a>\\n\
@@ -9445,38 +8872,15 @@ require.alias("component-emitter/index.js", "dialog/deps/emitter/index.js");
 require.alias("component-emitter/index.js", "emitter/index.js");
 
 require.alias("component-overlay/index.js", "dialog/deps/overlay/index.js");
-require.alias("component-overlay/template.js", "dialog/deps/overlay/template.js");
 require.alias("component-overlay/index.js", "overlay/index.js");
 require.alias("component-emitter/index.js", "component-overlay/deps/emitter/index.js");
 
-require.alias("component-dom/index.js", "component-overlay/deps/dom/index.js");
-require.alias("component-type/index.js", "component-dom/deps/type/index.js");
+require.alias("component-domify/index.js", "component-overlay/deps/domify/index.js");
 
-require.alias("component-event/index.js", "component-dom/deps/event/index.js");
+require.alias("component-event/index.js", "component-overlay/deps/event/index.js");
 
-require.alias("component-delegate/index.js", "component-dom/deps/delegate/index.js");
-require.alias("component-matches-selector/index.js", "component-delegate/deps/matches-selector/index.js");
-require.alias("component-query/index.js", "component-matches-selector/deps/query/index.js");
-
-require.alias("component-event/index.js", "component-delegate/deps/event/index.js");
-
-require.alias("component-indexof/index.js", "component-dom/deps/indexof/index.js");
-
-require.alias("component-domify/index.js", "component-dom/deps/domify/index.js");
-
-require.alias("component-classes/index.js", "component-dom/deps/classes/index.js");
+require.alias("component-classes/index.js", "component-overlay/deps/classes/index.js");
 require.alias("component-indexof/index.js", "component-classes/deps/indexof/index.js");
-
-require.alias("component-css/index.js", "component-dom/deps/css/index.js");
-
-require.alias("component-sort/index.js", "component-dom/deps/sort/index.js");
-
-require.alias("component-value/index.js", "component-dom/deps/value/index.js");
-require.alias("component-value/index.js", "component-dom/deps/value/index.js");
-require.alias("component-type/index.js", "component-value/deps/type/index.js");
-
-require.alias("component-value/index.js", "component-value/index.js");
-require.alias("component-query/index.js", "component-dom/deps/query/index.js");
 
 require.alias("component-domify/index.js", "dialog/deps/domify/index.js");
 require.alias("component-domify/index.js", "domify/index.js");
