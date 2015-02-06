@@ -73,8 +73,11 @@ function Dialog(options) {
   this.render(options);
   if (active && !active.hiding) active.hide();
   if (exports.effect) this.effect(exports.effect);
-  this.on('escape', this.hide.bind(this));
+  
   active = this;
+  this.on('escape', function(){
+    active.hide();
+  });
 };
 
 /**
