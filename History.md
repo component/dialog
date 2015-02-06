@@ -1,3 +1,7 @@
+0.3.1 / 2015-02-06
+==================
+
+ * fix: don't use bind as they are not available in legacy browsers
 
 0.3.0 / 2014-08-25
 ==================
