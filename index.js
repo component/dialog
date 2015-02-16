@@ -73,7 +73,7 @@ function Dialog(options) {
   this.render(options);
   if (active && !active.hiding) active.hide();
   if (exports.effect) this.effect(exports.effect);
-  
+
   active = this;
   this.on('escape', function(){
     active.hide();
@@ -247,11 +247,6 @@ Dialog.prototype.show = function(){
 
   // position
   document.body.appendChild(this.el);
-  if (!this._fixed) {
-    setTimeout(function() {
-      self.el.style.marginLeft = -(self.el.offsetWidth / 2) + 'px'
-    }, 0);
-  }
   this._classes.remove('hide');
   this.emit('show');
   return this;

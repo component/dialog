@@ -1,16 +1,22 @@
 .dialog {
   position: fixed;
-  left: 50%;
   top: 150px;
-  max-width: 600px;
-  min-width: 250px;
-  border: 1px solid #eee;
-  background: white;
+  left: 5%;
+  width: 90%;
   z-index: 1000;
+  text-align: center;
 }
 
 .dialog .content {
+  box-sizing: border-box;
+  position: relative;
+  background: white;
+  max-width: 600px;
+  min-width: 252px;
+  border: 1px solid #eee;
   padding: 15px 20px;
+  display: inline-block;
+  text-align: left;
 }
 
 /* close */
@@ -77,4 +83,11 @@
 .dialog.scale.hide {
   -webkit-transform: scale(0);
   -moz-transform: scale(0);
+}
+
+/* off-center */
+
+.dialog.off-center {
+  text-align: left;
+  width: inherit;
 }
