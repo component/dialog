@@ -7,6 +7,17 @@
   text-align: center;
 }
 
+/* center dialog content to in both axes */
+.dialog.center {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .dialog .content {
   box-sizing: border-box;
   position: relative;
