@@ -1,3 +1,9 @@
+0.4.0 / 2015-02-16
+==================
+
+ * add: use pure-css positioning of the dialog.
+  * This change is minor because no API was changed nor was a regression observed.
+
 0.3.1 / 2015-02-06
 ==================
 
