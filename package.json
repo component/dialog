@@ -6,12 +6,19 @@
     "dialog",
     "ui"
   ],
+  "browser": {
+    "emitter": "emitter-component",
+    "overlay": "overlay-component",
+    "event": "event-component",
+    "classes": "classes-component",
+    "query": "query-component"
+  },
   "dependencies": {
-    "query-component": "0.0.1",
-    "event-component": "~0.1.0",
-    "emitter-component": "~1.1.1",
-    "domify": "~1.1.1",
-    "overlay-component": "~0.1.0",
-    "classes-component": "~1.1.3"
+    "query-component": "^0.0.1",
+    "event-component": "^0.1.0",
+    "emitter-component": "^1.1.1",
+    "domify": "^1.1.1",
+    "overlay-component": "^0.1.0",
+    "classes-component": "^1.1.3"
   }
 }
