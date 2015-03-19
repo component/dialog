@@ -1,8 +1,9 @@
 .dialog {
   position: fixed;
   top: 150px;
-  left: 5%;
-  width: 90%;
+  left: 0;
+  right: 0;
+  margin: auto;
   z-index: 1000;
   text-align: center;
 }

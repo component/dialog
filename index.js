@@ -248,6 +248,7 @@ Dialog.prototype.show = function(){
   // position
   document.body.appendChild(this.el);
   this._classes.remove('hide');
+  this.el.style.width = query('.content', this.el).offsetWidth+"px";
   this.emit('show');
   return this;
 };
