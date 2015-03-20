@@ -224,6 +224,45 @@ Dialog.prototype.fixed = function(){
 }
 
 /**
+ * Wraps the dialog el with .dialog-wrap element. 
+ * Useful for nice scrollbar feature in large dialogs.
+ * Can be used with overlay only (otherwise it will generate overlay by itself)!
+ *
+ * @return {Dialog} for chaining
+ * @api public
+ */
+
+Dialog.prototype.wrap = function(){
+  var self = this;
+  var wrap = document.createElement('div');
+  wrap.className = 'dialog-wrap';
+
+  //if no overlay add it
+  if (!self._overlay) {
+    self._overlay  = overlay();
+  }
+
+  //as wrap covers all screen it should take care of close on overlay zone click (if not modal)
+  if (!self._classes.has('modal')) {
+    wrap.className += ' not-modal'
+    events.bind(wrap, 'click', function(e) {
+      if (e.target === wrap) {
+        self.emit('close');
+        self.hide();
+      }
+    });
+  }
+
+  //append dialog
+  wrap.appendChild(self.el);
+
+  //redefine this.el so methods like remove can clean up full wrap instead of the element
+  self.el = wrap;
+
+  return this;
+}
+
+/**
  * Show the dialog.
  *
  * Emits "show" event.
