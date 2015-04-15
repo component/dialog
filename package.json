@@ -23,7 +23,7 @@
     "event-component": "^0.1.0",
     "emitter-component": "^1.1.1",
     "domify": "^1.1.1",
-    "overlay-component": "^0.1.0",
+    "overlay-component": "^0.3.0",
     "classes-component": "^1.1.3"
   }, 
   "devDependencies": {
