@@ -6,6 +6,15 @@
     "dialog",
     "ui"
   ],
+  "bugs": {
+    "url": "https://github.com/component/dialog/issues"
+  },
+  "homepage": "https://github.com/component/dialog",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:component/dialog.git"
+  },
+  "license": "MIT",
   "browser": {
     "emitter": "component-emitter",
     "overlay": "overlay-component",
