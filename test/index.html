@@ -63,11 +63,11 @@
             .on('hide', function(){
               console.log('closed fourth');
 
-              dialog('Click the overlay to close')
+              var overlayDialog = dialog('Click the overlay to close')
               .effect('slide')
               .overlay()
               .show()
-              .on('hide', function(){
+              .once('hide', function(){
                 console.log('closed fifth');
 
                 dialog('Modal')
@@ -93,6 +93,9 @@
                     .show()
                     .on('hide', function(){
                       console.log('closed eight');
+
+                      //test overlay once again (#21)
+                      overlayDialog.show();
                     });
 
                   });
