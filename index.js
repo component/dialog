@@ -234,8 +234,7 @@ Dialog.prototype.show = function(){
   // overlay
   if (overlay) {
     overlay.show();
-    overlay.on('hide', function _hide () {
-      overlay.off('hide', _hide);
+    overlay.once('hide', function () {
       self.hide();
     });
     this._classes.add('modal');
