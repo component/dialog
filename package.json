@@ -14,6 +14,9 @@
     "type": "git",
     "url": "git@github.com:component/dialog.git"
   },
+  "scripts": {
+    "build": "browserify -r ./index.js:dialog -d > build/build.js"
+  },
   "license": "MIT",
   "browser": {
     "emitter": "component-emitter",
@@ -32,9 +35,12 @@
     "component-event": "^0.1.0",
     "component-emitter": "^1.1.1",
     "domify": "^1.1.1",
-    "overlay-component": "^0.3.0",
+    "overlay-component": "^0.3.5",
     "component-classes": "^1.1.3",
     "stringify": "^3.1.0"
   },
-  "style": "./dialog.css"
+  "style": "./dialog.css",
+  "devDependencies": {
+    "browserify": "^10.2.3"
+  }
 }

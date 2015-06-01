@@ -170,7 +170,7 @@ Dialog.prototype.effect = function(type){
  */
 
 Dialog.prototype.modal = function(){
-  this._overlay = overlay();
+  if (!this._overlay) this._overlay = overlay();
   return this;
 };
 
@@ -184,12 +184,7 @@ Dialog.prototype.modal = function(){
 Dialog.prototype.overlay = function(opts){
   var self = this;
   opts = opts || { closable: true };
-  var o = overlay(opts);
-  o.on('hide', function(){
-    self._overlay = null;
-    self.hide();
-  });
-  this._overlay = o;
+  this._overlay = overlay(opts);
   return this;
 };
 
@@ -239,6 +234,10 @@ Dialog.prototype.show = function(){
   // overlay
   if (overlay) {
     overlay.show();
+    overlay.on('hide', function _hide () {
+      overlay.off('hide', _hide);
+      self.hide();
+    });
     this._classes.add('modal');
   }
 
@@ -260,8 +259,7 @@ Dialog.prototype.show = function(){
 
 Dialog.prototype.hideOverlay = function(){
   if (!this._overlay) return;
-  this._overlay.remove();
-  this._overlay = null;
+  this._overlay.hide();
 };
 
 /**
@@ -308,6 +306,8 @@ Dialog.prototype.hide = function(ms){
 
   return self;
 };
+
+
 /**
  * Hide the dialog without potential animation.
  *
