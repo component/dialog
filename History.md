@@ -1,3 +1,10 @@
+
+1.0.0 / 2015-06-04
+==================
+
+ * add support reusing dialog with overlay
+ * updates in package.json to make it possible to use with browserify
+
 0.4.0 / 2015-02-16
 ==================
 
