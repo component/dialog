@@ -91,3 +91,25 @@
   text-align: left;
   width: inherit;
 }
+
+/* dialog wrap */
+
+.dialog-wrap {
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.dialog-wrap.not-modal {
+  cursor: pointer;
+}
+
+.dialog-wrap .dialog {
+  position: absolute;
+  margin-bottom: 150px;
+  cursor: auto;
+}

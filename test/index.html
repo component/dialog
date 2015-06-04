@@ -23,6 +23,9 @@
         top: 20px;
         left: 15%;
       }
+      .dialog.pretty-high .content {
+        min-height: 1000px;
+      }
     </style>
   </head>
   <body>
@@ -97,6 +100,18 @@
                       //test overlay once again (#21)
                       overlayDialog.show();
                     });
+
+                      dialog('Pretty high wrapped dialog')
+                      .effect('fade')
+                      .overlay()
+                      .closable()
+                      .fixed()
+                      .wrap()
+                      .addClass('pretty-high')
+                      .show()
+                      .on('hide', function(){
+                        console.log('closed nine');
+                      });
 
                   });
                 });
